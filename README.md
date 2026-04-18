@@ -1,40 +1,51 @@
 # Projekt
 ## Projektursprung
-Bei meiner Arbeit als Straßenbahnfahrer kamen mir zwei Ideen, von denen ich mir erhoffe, dass sie die Sicherheit der Fahrgäste, Fahrer und Personen im Umfeld der Straßenbahn erhöhen könnte.
-Da ich Angewandte Informatik studiere, will ich probieren, diese Ideen in einem industrienahen Modell zu implementieren.
+Bei meiner Arbeit als Straßenbahnfahrer kamen mir zwei Ideen, von denen ich mir erhoffe, dass sie die Sicherheit der Fahrgäste, Fahrer und Personen im Umfeld der Straßenbahn erhöhen können.
+Da ich Angewandte Informatik studiere, möchte ich versuchen, diese Ideen in einem industrienahen Modell umzusetzen.
 
 ## Projektbeschreibung
-Das Gesamtprojekt ist aufgeteilt in zwei Teile.
+Das Gesamtprojekt ist in zwei Teile gegliedert
 
 ### 1. Teil
 Grundlage:
-Die Türüberwachung der mir bekannten Straßenbahnen ist bereits sehr gut. Eine Freigabe der Türen ist beispielsweise nur möglich, wenn die Bahn sich wirklich im Stillstand befindet. Wenn während der Fahrt (mindestens) eine Tür duch Dritte geöffnet wird, verlangsamt sich die Fahrt automatisch und der Fahrer wird gewarnt. Auch ein Anfahren ist nicht möglich so lange mindestens noch eine Tür geöffnet ist oder die Türfreigabe nicht herausgenommen wurde. Bei Bahnen, die mir bekannt sind, haben die Zustände der Türen bzw. des Türfreigabetasters auch Einfluss auf die Schaltung der Lichtsignalanlagen. Das bedeutet beispielsweise, wenn sich nah hinter der Haltestelle eine Lichtsignalanlage (LSA) befindet, wird diese angefordert, sobald alle Türen der Bahnen geschlossen sind. Dadurch erlangt die Straßenbahn an der nächsten Kreuzung Priorität. Es gibt auch Bahnen, bei denen die Anforderung geschickt wird, wenn der Türfreigabetaster herausgenommen wird, also die Türen nicht mehr von den Fahrgästen per Knopfdruck geöffnet werden können.
+Die Türüberwachung der mir bekannten Straßenbahnen ist bereits sehr weit entwickelt. Eine Freigabe der Türen ist beispielsweise nur möglich, wenn sich die Bahn im Stillstand befindet. Wenn während der Fahrt mindestens eine Tür duch Dritte geöffnet wird, verlangsamt das Fahrzeug automatisch und der Fahrer wird gewarnt. Auch ein Anfahren ist nicht möglich, während noch mindestens eine Tür geöffnet oder die Türfreigabe aktiv ist.
+Des Weiteren haben die Zustände der Türen bzw. des Türfreigabetasters - je nach Modell und Hersteller - auch Einfluss auf die Schaltung der Lichtsignalanlagen (LSA). LSA, die nah hinter einer Haltestelle sind, werden beispielsweise angefordert, sobald nach dem Fahrgastwechsel das erste Mal alle Türen der Bahn wieder geschlossen sind. Durch die Anforderung erhält die Straßenbahn an der nächsten Kreuzung Priorität. Es gibt auch Bahnen, bei denen die Anforderung geschickt wird, wenn der Türfreigabetaster herausgenommen wird, also die Türen nicht mehr von den Fahrgästen per Knopfdruck geöffnet werden können.
 
-Die Realität und das mögliche Problem, das dadurch entstehen kann:
-Die Fahrer nutzen den Türfreigabetaster, um die Anforderung an der nächsten LSA zu erhalten. Es wird ihnen häufig so beigebracht und an vielen Haltestellen mit folgender LSA ist auch das genau der Sinn. Allerdings kann es passieren, dass die Abfolge "Türfreigabe kurz erneut geben, um Anforderung zu erhalten" dazu führt, dass dies auch an LSAs genutzt wird, an denen das nicht vorgesehen ist - einfach weil der Vorgang schon im Muskelgedächtnis ist. Besonders problematisch wäre das an großen Kreuzungen mit viel Individualverkehr (IV). Wenn dort ein Fahrer fahrlässig (z.B. aus Unachtsamkeit am Ende einer langen Schicht) die Türfreigabe setzt, könnten Fahrgäste im schlimmsten Fall auf die Fahrbahn laufen oder fallen und vom IV erfasst werden.
+Problemstellung:
+Die Fahrer nutzen den Türfreigabetaster, um die Anforderung an der nächsten LSA auszulösen. An vielen Haltestellen ist das exakt so vorgesehen und wird in der Ausbildung so vermittelt.
+Allerdings kann es passieren, dass dieser Ablauf - "Türfreigabe schnell erneut setzen für Anforderung" - dazu führt, dass dies auch an LSAs genutzt wird, an denen das nicht vorgesehen ist, verursacht beispielsweise durch Gewöhnungseffekte. Für die Fahrgäste wäre das Risiko besonders hoch außerhalb des Haltestellenbereich nah am Individualverkehr (IV).
 
-Meine Lösungsidee:
-Die Bahn erkennt über einen Sensor, ob sie tatsächlich vollständig innerhalb eines Haltestellenbereichs steht. Wenn ja, ist erzielt der Türfreigabentaster die gewöhnliche Wirkung und der Fahrgastwechsel kann normal vonstattengehen. Wenn nicht, löst der Türfreigabentaster nicht die tatsächliche Freigabe der Türen aus und es erscheint eine Meldung an den Fahrer.
-Allerdings muss es in Notfällen oder bei Störungen einen Override dafür geben. Dieser könnte mit Hilfe eines weiteren Türfreigabetasters implementiert werden. Dieser wäre dann nicht als Standard zu benutzen und ist räumlich vom normalen Taster getrennt. Sollte eine Störung im System vorliegen könnte so übergangsweise aber noch ein Fahrgastwechsel ermöglicht werden oder eine schnelle Evakuierung im Haltestellenbereich ermöglicht werden.
+Lösungsidee:
+Das System bestimmt an Hand von Sensordaten, ob sich das Fahrzeug vollständig innerhalb eines Haltestellenbereichs befindet.
+- Fahrzeug innerhalb des Haltestellenbereichs: Türfreigabetaster verhält sich wie im Regelbetrieb
+- Fahrzeug außerhalb des Haltestellenbereichs: Regelbetrieb des Türfreigabetaster wird unterdrückt, der Fahrer wird informiert
+Für Notfälle oder Störungen wird zusätzlich eine separate Notfreigabe implementiert, welche bewusst vom regulären Türfreigabetaster getrennt ist, um beispielsweise zügige Evakuierungen zu ermöglichen.
 
 
 ### 2. Teil
 Grundlage:
-Beim Fahren einer Straßenbahn kann Gewohnheit sehr gefährlich werden. Es gibt viele LSAs, die "immer gleich" schalten. Man fährt auf sie zu und man erhält das Signal F1 (Fahrt freigegeben). Ein Mal, zwei Mal, drei Mal - alles am selben Tag. Bei der nächsten Schicht, geschieht es genauso. So kann man Signale hunderte Male sehen und es verhält sich immer gleich. Doch es reicht einmal, dass die LSAs nicht wie gewohnt schaltet und Querverkehr stattdessen freie Fahrt erhält. Dann kommt es auf den Fahrer an, aufmerksam zu sein und korrekt zu handeln und zu bremsen.
+Viele Lichtsignalanlagen verhalten sich in ihrer Schaltung "immer" wieder gleich. Dadurch können sich bei Fahrern Gewöhnungseffekte einstellen.
 
-Die Realität:
-Menschen machen Fehler, so aufmerksam sie auch versuchen zu sein, und können Lichtsignalanlagen tatsächlich "übersehen".
+Problemstellung:
+Sei es auf Grund von Gewöhnung oder durch eine kurze Unaufmerksamkeit, können Fahrer Halt zeigende Signale zu spät wahrnehmen oder gar komplett übersehen. Dies geschieht sehr selten, da menschliche Fehler aber nicht vollständig vermeidbar sind, führen diese selten auftretenden Situationen zu gefährlichen Situationen.
 
-Meine Lösungsidee:
-Diese Idee ist komplexer und wahrscheinlich deutlich komplizierter umzusetzen. Theoretisch wäre es möglich, dass in entsprechendem Abstand zur LSA (so weit weg wie nötig, so nah wie möglich) ein (streckenseitiges) Signalinformationsmodul verbaut ist. Dieses enthält Informationen über die ID der LSA, wie weit es von der LSA entfernt ist, welches Signal auf der LSA steht und wie viel Zeit noch ist, bis das Signal fällt (von F1 auf F0 beispielsweise). Ein Sensor in der Bahn könnte diese Information auslesen und an einen Microcontroller in der Bahn senden. Dieser Microcontroller würde diese Informationen verarbeiten und kombinieren mit den Fahrdaten (also z.B. der Geschwindigkeit und Beschleunigung) der Bahn und so errechnen, ob die Tram bei Ankunft am LSA mit den aktuellen Bedingungen F0 ("rot") oder F1 ("grün") hat. Es gäbe dann verschiedene Möglichkeiten, wie die Bahn reagieren könnte, sollte bei errechneter Ankunft F0 signalisiert sein. Theoretisch könnte sie versuchen selbst eine Bremsung einzuleiten. Um den Rahmen dieses Projekts realistisch zu halten, bevorzuge ich derzeit die Lösung, dass die Bahn eine Warnung an den Fahrer sendet. (Dieser könnte dann noch ggf. dazu gezwungen werden, diese zu quittieren, um beispielsweise eine Zwangsbremsung zu verhindern, falls das System fehlerhaft ist. Aber auch dieser Teil, würde aktuell den Rahmen des Projekts sprengen.)
+Lösungsidee:
+Bereitstellung von streckenseitigen Signalinformationsmodulen, welche folgende Informationen bereitstellen:
+- Identifikation der spezifischen LSA
+- Entfernung zur LSA
+- aktueller Signalzustand (F0 bis F5)
+- verbleibende Zeit bis zum Signalwechsel
+
+Beim Überfahren dieses Moduls liest ein System in der Bahn diese Informationen aus und verarbeitet sie gemeinsam mit den Fahrdaten der Bahn, z.B. Geschwindigkeit und Beschleunigung. Auf Basis dieser Daten wird ermittelt, welches Signal an der LSA aktiv ist, wenn die Bahn dieses erreicht.
+Im Rahmen dieses Projekts wird bei einem solchen Zustand eine Warnung an den Fahrer, falls das Signal F0 zeigen würde. Weiterführende Maßnahmen (automatische Bremsung oder Quittierungslogik) sind denkbar, werden aus Komplexitätsgründen zunächst aber nicht umgesetzt.
 
 ### Technologien
-Für den 1. Teil des Projekts werden folgende Teile mindestens benötigt:
+Für den ersten Teil des Projekts werden mindestens folgende Komponenten benötigt:
 - 2 Microcontroller
 - 2 CAN-Module
 - ca. 1m Kabel (vorläufig aus Ethernetkabeln) zur Verbindung der CAN-Module
-- 2 120 Ohm Widerstände
-- weitere kleinere Technikteile (LEDs, Push-Buttons, Potentiometer)
+- 2 Abschlusswiderstände (120 Ohm)
+- weitere elektronische Teile (LEDs, Push-Buttons, Potentiometer etc.)
 
 ### Vorgehensweise
 Stand 17.04.2026
@@ -43,17 +54,23 @@ Stand 17.04.2026
 1. 1. CAN-Bus-Kommunikation einrichten
 1. 2. Geschwindigkeit Zustand simulieren (== 0, > 0)
 1. 3. Türzustand simulieren (offen, geschlossen)
-1. 4. Türfreigabezustand (eingeschaltet, ausgeschaltet)
-2. Zusatzfunktionalität aus meiner Idee implementieren
+1. 4. Türfreigabezustand (aktiv, inaktiv)
+2. Erweiterte Funktionalität implementieren
 2. 1. Haltestellebereich simulieren + Zustand der Bahn (in Haltestelle oder nicht in Haltestelle)
-2. 2. Abhängigkeit der Türfreigabe von Zustand aus 2. 1.
+2. 2. Abhängigkeit der Türfreigabe von Zustand der Bahn
 2. 3. Störungs-/Not-Türfreigabe implementieren
 
 
 
 ## Projektziele
-Ziel ist, neben Studium und Arbeit, das Projekt möglichst korrekt und weit zu bearbeiten. Persönlich erhoffe ich mir, praxisnahe Übung sowie Wissen zu erlangen, welche den Start in mein Praktikum erleichtern und den Beitrag, den ich dann leisten will, erhöht. 
+Ziel ist, neben Studium und Arbeit, das Projekt fachlich korrekt und möglichst vollständig zu bearbeiten.
+Insbesonders soll praxisnahe Erfahrung in folgenden Bereichen gesammelt werden:
+- Embedded-Programmierung
+- verteilte Systemarchitektur
+- CAN-Kommunikation
+- sicherheitsorientierte Systemlogik
 
 
 ## Hinweis zur Nutzung von KI
-Ich werde beispielsweise für mein eigenes Verständnis mir selbst Dinge von Künstlichen Intelligenzen erläutern lassen. Auch werde ich diese, wenn es mir angemessen scheint, beispielsweise als Programmier-Hilfe nutzen. Die klare Bedingung ist allerdings: Ich bin für jeglichen Code selbst verantwortlich! Ob generiert oder aus eigener Feder - mein Anspruch ist, den Code verstehen, erklären sowie für seine Richtigkeit gewähren zu können.
+Zur Unterstützung meines eigenen Lernprozesses setze ich Künstliche Intelligenzen ein, sei es als Hilfe bei der Programmierung oder generell zur Unterstützung beim Erlernen von Fachwissen.
+Die klare Bedingung ist allerdings: Jeglicher Code im Projekt wird von mir verstanden, überprüft und verantwortet.
