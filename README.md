@@ -4,7 +4,7 @@ Bei meiner Arbeit als Straßenbahnfahrer kamen mir zwei Ideen, von denen ich mir
 Da ich Angewandte Informatik studiere, möchte ich versuchen, diese Ideen in einem industrienahen Modell umzusetzen.
 
 ## Projektbeschreibung
-Das Gesamtprojekt ist in zwei Teile gegliedert
+Das Gesamtprojekt ist in zwei Teile gegliedert.
 
 ### 1. Teil
 Grundlage:
@@ -37,7 +37,7 @@ Bereitstellung von streckenseitigen Signalinformationsmodulen, welche folgende I
 - verbleibende Zeit bis zum Signalwechsel
 
 Beim Überfahren dieses Moduls liest ein System in der Bahn diese Informationen aus und verarbeitet sie gemeinsam mit den Fahrdaten der Bahn, z.B. Geschwindigkeit und Beschleunigung. Auf Basis dieser Daten wird ermittelt, welches Signal an der LSA aktiv ist, wenn die Bahn dieses erreicht.
-Im Rahmen dieses Projekts wird bei einem solchen Zustand eine Warnung an den Fahrer, falls das Signal F0 zeigen würde. Weiterführende Maßnahmen (automatische Bremsung oder Quittierungslogik) sind denkbar, werden aus Komplexitätsgründen zunächst aber nicht umgesetzt.
+Im Rahmen dieses Projekts wird in einem solchen Fall eine Warnung an den Fahrer ausgegeben, falls das Signal F0 zeigen würde. Weiterführende Maßnahmen (automatische Bremsung oder Quittierungslogik) sind denkbar, werden aus Komplexitätsgründen zunächst aber nicht umgesetzt.
 
 ### Technologien
 Für den ersten Teil des Projekts werden mindestens folgende Komponenten benötigt:
@@ -51,14 +51,14 @@ Für den ersten Teil des Projekts werden mindestens folgende Komponenten benöti
 Stand 17.04.2026
 #### 1. Projekt-Teil
 1. Grundlegende Funktionalitäten implementieren
-1. 1. CAN-Bus-Kommunikation einrichten
-1. 2. Geschwindigkeit Zustand simulieren (== 0, > 0)
-1. 3. Türzustand simulieren (offen, geschlossen)
-1. 4. Türfreigabezustand (aktiv, inaktiv)
+    1. CAN-Bus-Kommunikation einrichten
+    2. Geschwindigkeit Zustand simulieren (== 0, > 0)
+    3. Türzustand simulieren (offen, geschlossen)
+    4. Türfreigabezustand (aktiv, inaktiv)
 2. Erweiterte Funktionalität implementieren
-2. 1. Haltestellebereich simulieren + Zustand der Bahn (in Haltestelle oder nicht in Haltestelle)
-2. 2. Abhängigkeit der Türfreigabe von Zustand der Bahn
-2. 3. Störungs-/Not-Türfreigabe implementieren
+    1. Haltestellenbereich simulieren + Zustand der Bahn (in Haltestelle oder nicht in Haltestelle)
+    2. Abhängigkeit der Türfreigabe von Zustand der Bahn
+    3. Störungs-/Not-Türfreigabe implementieren
 
 
 
