@@ -1,17 +1,14 @@
-﻿
-
-
-,State_Description,State Z,vehicle_is_stopped,door_release_is_set,stop_is_requested,doors_are_closed,Error (Emergency),Exception,Safe State
-,"moving, door open",0,0,0,0,0,x,,
-,moving,1,0,0,0,1,,,x
-,"moving, door open",2,0,0,1,0,x,,
-,"moving, stop requested",3,0,0,1,1,,,x
-,"moving, door open",4,0,1,0,0,x,,
-,"moving, door release set",5,0,1,0,1,,x,
-,"moving, door open",6,0,1,1,0,x,,
-,"moving, door release set",7,0,1,1,1,,x,
-,"stopped, doors open (automatically closing?)",8,1,0,0,0,,,x
-Startzustand,"stopped, doors closed",9,1,0,0,1,,,x
+﻿,State_Description,State Z,vehicle_is_stopped,door_release_is_set,stop_is_requested,doors_are_closed,Error (Emergency),Exception,Safe State,Comment
+,"moving, door open",0,0,0,0,0,x,,,
+,moving,1,0,0,0,1,,,x,
+,"moving, door open",2,0,0,1,0,x,,,
+,"moving, stop requested",3,0,0,1,1,,,x,
+,"moving, door open",4,0,1,0,0,x,,,
+,"moving, door release set",5,0,1,0,1,,x,,
+,"moving, door open",6,0,1,1,0,x,,,
+,"moving, door release set",7,0,1,1,1,,x,,
+,"stopped, doors open (automatically closing?)",8,1,0,0,0,,,x,
+Startzustand,"stopped, doors closed",9,1,0,0,1,,,x,
 ,"stopped, doors open, door release reset",10,1,0,1,0,,,x,"Safe state, if at station -  here is my idea"
 ,"stopped, stop requested",11,1,0,1,1,,,x,
 ,"stopped, door open",12,1,1,0,0,,,x,"Safe state, if at station -  here is my idea"
