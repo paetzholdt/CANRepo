@@ -16,5 +16,5 @@ Startzustand,"stopped, doors closed",9,1,0,0,1,,,x
 ,"stopped, stop requested",11,1,0,1,1,,,x,
 ,"stopped, door open",12,1,1,0,0,,,x,"Safe state, if at station -  here is my idea"
 ,stopped,13,1,1,0,1,,,x,
-,"doors open, but stop still requested",14,1,1,1,0,,x,x,"not sure yet, how to handle this specific state"
+,"doors open, but stop still requested",14,1,1,1,0,,x,x,
 ,"doors not open, though release is set and stop is requested",15,1,1,1,1,,x,
