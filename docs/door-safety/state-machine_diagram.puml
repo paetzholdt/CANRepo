@@ -1,7 +1,11 @@
 @startuml state-machine_door-safety
 
 legend left
-Stopped_BrakesEnforced is a safe state as long as the 
+s. = system
+d. = driver
+p. = passenger
+
+Stopped_ImmobilizerActive is a safe state as long as the 
 door release is only pressed inside the perimeters of a station
 endlegend
 
@@ -9,32 +13,54 @@ endlegend
 state SafeState {
     [*] --> Stopped_Idle
     state Stopped_Idle
-    state Stopped_BrakesEnforced {
-        state Stopped_DoorReleased
+    state Stopped_ImmobilizerActive {
+        state Stopped_DoorReleased_StationDetected
+        state Stopped_DoorReleased_NotStationDetected
+        state Stopped_DoorReleasedFallback
         state Stopped_EmergencyExitUsed
     }
     state Moving
 }
 
-state Exception {
+state ExceptionState {
     state Stopped_DoorMalfunction
 }
 
-state Error {
+state ErrorState {
     state Moving_DoorOpen
 }
+
+ExceptionState: manageable fault condition
+
+ErrorState: safety-critical invalid state requiring immediate intervention
+
+Stopped_ImmobilizerActive: brakes are enforced
+Stopped_ImmobilizerActive: s. ignores drive input
+Stopped_ImmobilizerActive: s. warns d., when drive input is given
 
 Stopped_Idle: door release inactive
 Stopped_Idle: doors are closed
 Stopped_Idle: stop may be requested
 
 
-Stopped_DoorReleased: releasing door resets stop request
-Stopped_DoorReleased: stop request opens door
-Stopped_DoorReleased: doors close automatically or manually
+Stopped_DoorReleased_StationDetected: releasing door resets stop request
+Stopped_DoorReleased_StationDetected: stop request opens door
+Stopped_DoorReleased_StationDetected: doors close automatically or manually
 
-Stopped_EmergencyExitUsed: system alerts driver
+Stopped_DoorReleased_NotStationDetected: s. blocks door release
+Stopped_DoorReleased_NotStationDetected: s. does not open any door
+Stopped_DoorReleased_NotStationDetected: s. warns d. - station not detected
+
+Stopped_DoorReleasedFallback: s. ignores station detection
+Stopped_DoorReleasedFallback: s. allows opening of doors via stop request
+Stopped_DoorReleasedFallback: s. informs d., that fallback is set
+Stopped_DoorReleasedFallback: fallback can be used, in case of:
+Stopped_DoorReleasedFallback: - technical malfunctions
+Stopped_DoorReleasedFallback: - emergencies
+
+Stopped_EmergencyExitUsed: s. alerts d.
 Stopped_EmergencyExitUsed: at least one door open
+
 
 Moving: doors are closed
 Moving: stop may be requested
@@ -43,30 +69,42 @@ Moving: stop may be requested
 Stopped_DoorMalfunction: doors stay closed even though
 Stopped_DoorMalfunction: - door_release is set
 Stopped_DoorMalfunction: - AND stop is requested
+Stopped_DoorMalfunction: Immobilizer active
 
 
-Moving_DoorOpen: system alerts driver
-Moving_DoorOpen: system stops vehicle
+Moving_DoorOpen: s. alerts d.
+Moving_DoorOpen: s. stops vehicle
 
 
-Stopped_Idle --> Stopped_DoorReleased : driver sets door release [vehicle stopped]
-Stopped_DoorReleased --> Stopped_Idle : passenger transfer finished
+Stopped_Idle --> Stopped_DoorReleased_StationDetected : d. sets door release [vehicle stopped, station detected]
+Stopped_DoorReleased_StationDetected --> Stopped_Idle : passenger transfer finished
 
-Stopped_Idle --> Stopped_EmergencyExitUsed : passenger opened emergency exit
-Stopped_EmergencyExitUsed --> Stopped_Idle : driver resets emergency exit
+Stopped_Idle --> Stopped_DoorReleased_NotStationDetected : d. sets door release [vehicle stopped, station not detected]
+Stopped_DoorReleased_NotStationDetected --> Stopped_Idle : d. resets door release
+
+Stopped_Idle --> Stopped_DoorReleasedFallback : d. sets fallback door release [vehicle stopped]
+Stopped_DoorReleasedFallback --> Stopped_Idle : d. resets fallback door release
+
+Stopped_Idle --> Stopped_EmergencyExitUsed : p. opens emergency exit
+Stopped_EmergencyExitUsed --> Stopped_Idle : d. resets emergency exit
 
 Stopped_Idle --> Moving : vehicle accelerates
 Moving --> Stopped_Idle : vehicle stops
 
 
-Stopped_DoorReleased --> Stopped_EmergencyExitUsed : passenger opened emergency exit
-Stopped_EmergencyExitUsed --> Stopped_DoorReleased : driver resets emergency exit
+Stopped_DoorReleased_StationDetected --> Stopped_EmergencyExitUsed : p. opens emergency exit
+Stopped_EmergencyExitUsed --> Stopped_DoorReleased_StationDetected : d. resets emergency exit
 
-Stopped_DoorReleased --> Stopped_DoorMalfunction : stop request failed / system warns driver
-Stopped_DoorMalfunction --> Stopped_DoorReleased : driver resolves malfunction
+Stopped_DoorReleased_StationDetected --> Stopped_DoorMalfunction : stop request failed / s. warns d.
+Stopped_DoorMalfunction --> Stopped_DoorReleased_StationDetected : d. resolves malfunction
 
+Stopped_DoorReleased_NotStationDetected --> Stopped_EmergencyExitUsed : p. opens emergency exit
+Stopped_EmergencyExitUsed --> Stopped_DoorReleased_NotStationDetected : d. resets emergency exit
 
-Moving --> Moving : driver sets door release / system blocks request; warns driver
+Stopped_DoorReleasedFallback --> Stopped_EmergencyExitUsed : p. opens emergency exit
+Stopped_EmergencyExitUsed --> Stopped_DoorReleasedFallback : d. resets emergency exit
+
+Moving --> Moving : d. sets door release / s. blocks request; warns d.
 
 
 Moving --> Moving_DoorOpen : door opens while moving
