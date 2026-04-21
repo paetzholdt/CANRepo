@@ -83,7 +83,7 @@ Moving_DoorOpen: s. stops vehicle
 
 
 Stopped_Idle --> Stopped_DoorReleased_StationDetected : d. sets door release [vehicle stopped, station detected]
-Stopped_DoorReleased_StationDetected --> Stopped_Idle : passenger transfer finished
+Stopped_DoorReleased_StationDetected --> Stopped_Idle : passenger transfer finished [doors closed, then reset door release]
 
 Stopped_Idle --> Stopped_DoorReleased_NotStationDetected : d. sets door release [vehicle stopped, station not detected]
 Stopped_DoorReleased_NotStationDetected --> Stopped_Idle : d. resets door release
@@ -101,7 +101,7 @@ Moving --> Stopped_Idle : vehicle stops
 Stopped_DoorReleased_StationDetected --> Stopped_EmergencyExitUsed : p. opens emergency exit
 Stopped_EmergencyExitUsed --> Stopped_DoorReleased_StationDetected : d. resets emergency exit
 
-Stopped_DoorReleased_StationDetected --> Stopped_DoorMalfunction : stop request failed / s. warns d.
+Stopped_DoorReleased_StationDetected --> Stopped_DoorMalfunction : door malfunction reported / s. warns d.
 Stopped_DoorMalfunction --> Stopped_DoorReleased_StationDetected : d. resolves malfunction
 
 Stopped_DoorReleased_NotStationDetected --> Stopped_EmergencyExitUsed : p. opens emergency exit
@@ -115,6 +115,9 @@ Stopped_NotDoorReleased_DoorOpen --> Stopped_DoorReleased_StationDetected : d. s
 
 Stopped_FallbackDoorReleased --> Stopped_NotDoorReleased_DoorOpen : d. resets fallback door release [not all doors closed]
 Stopped_NotDoorReleased_DoorOpen --> Stopped_FallbackDoorReleased : d. sets fallback door release [not all doors closed]
+
+Stopped_FallbackDoorReleased --> Stopped_DoorMalfunction : door malfunction reported / s. warns d.
+Stopped_DoorMalfunction --> Stopped_FallbackDoorReleased : d. resolves malfunction
 
 Stopped_NotDoorReleased_DoorOpen --> Stopped_Idle : all doors closed
 

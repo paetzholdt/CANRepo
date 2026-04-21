@@ -1,27 +1,37 @@
 ﻿Current State,Event,Condition,Next State,Action
 Stopped_Idle,SetDoorRelease,"is_vehicle_stopped
 && is_station_detected",Stopped_DoorReleased_StationDetected,"block_drive_input;
-enforce_brakes;
+activate_immobilizer;
 enable_door_release;
 start_auto_close_timer;"
 Stopped_Idle,SetDoorRelease,"is_vehicle_stopped
 && !is_station_detected",Stopped_DoorReleased_NotStationDetected,"block_drive_input;
-enforce_brakes;
+activate_immobilizer;
 block_door_release;
 warn_driver;"
 Stopped_Idle,SetFallbackDoorRelease,is_vehicle_stopped,Stopped_FallbackDoorReleased,"block_drive_input;
-enforce_brakes;
+activate_immobilizer;
 enable_door_release;
-start_auto_close_timer;",,,
+start_auto_close_timer;"
 Stopped_Idle,Accelerate,"is_all_doors_closed_signal
-&& !is_door_release_active
-&& !is_fallback_door_release_active",Moving,"block_door_release;
+&& !is_door_release_set
+&& !is_fallback_door_release_set",Moving,"block_door_release;
 block_fallback_door_release;
-",,,
-Stopped_Idle,OpenEmergencyExit,,Stopped_EmergencyExitUsed,"block_drive_input;
-enforce_brakes;
-alert_driver;",,,
-
-
-
-,,,,
+"
+Stopped_Idle,EmergencyExitUsed,,Stopped_EmergencyExitUsed,"block_drive_input;
+activate_immobilizer;
+alert_driver;"
+Stopped_DoorReleased_StationDetected,ResetDoorRelease,is_all_doors_closed_signal,Stopped_Idle,allow_drive_input;
+Stopped_DoorReleased_StationDetected,ResetDoorRelease,!is_all_doors_closed_signal,Stopped_NotDoorReleased_DoorOpen,"block_drive_input;
+activate_immobilizer;"
+Stopped_DoorReleased_StationDetected,EmergencyExitUsed,,Stopped_EmergencyExitUsed,"block_drive_input;
+activate_immobilizer;
+alert_driver;"
+Stopped_DoorReleased_StationDetected,DoorMalfunctionReported,,Stopped_DoorMalfunction,"block_drive_input;
+activate_immobilizer;
+warn_driver;
+"
+Stopped_DoorReleased_NotStationDetected,ResetDoorRelease,is_all_doors_closed_signal,Stopped_Idle,allow_drive_input;
+Stopped_DoorReleased_NotStationDetected,EmergencyExitUsed,,Stopped_EmergencyExitUsed,"block_drive_input;
+activate_immobilizer;
+alert_driver;"
