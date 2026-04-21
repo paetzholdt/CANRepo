@@ -16,7 +16,7 @@ state SafeState {
     state Stopped_ImmobilizerActive {
         state Stopped_DoorReleased_StationDetected
         state Stopped_DoorReleased_NotStationDetected
-        state Stopped_DoorReleasedFallback
+        state Stopped_FallbackDoorReleased
         state Stopped_NotDoorReleased_DoorOpen
         state Stopped_EmergencyExitUsed
     }
@@ -52,12 +52,12 @@ Stopped_DoorReleased_NotStationDetected: s. blocks door release
 Stopped_DoorReleased_NotStationDetected: s. does not open any door
 Stopped_DoorReleased_NotStationDetected: s. warns d. - station not detected
 
-Stopped_DoorReleasedFallback: s. ignores station detection
-Stopped_DoorReleasedFallback: s. allows opening of doors via stop request
-Stopped_DoorReleasedFallback: s. informs d., that fallback is set
-Stopped_DoorReleasedFallback: fallback can be used, in case of:
-Stopped_DoorReleasedFallback: - technical malfunctions
-Stopped_DoorReleasedFallback: - emergencies
+Stopped_FallbackDoorReleased: s. ignores station detection
+Stopped_FallbackDoorReleased: s. allows opening of doors via stop request
+Stopped_FallbackDoorReleased: s. informs d., that fallback is set
+Stopped_FallbackDoorReleased: fallback can be used, in case of:
+Stopped_FallbackDoorReleased: - technical malfunctions
+Stopped_FallbackDoorReleased: - emergencies
 
 Stopped_NotDoorReleased_DoorOpen: d. waiting for doors to close
 Stopped_NotDoorReleased_DoorOpen: s. does not open door when stop is requested
@@ -88,8 +88,8 @@ Stopped_DoorReleased_StationDetected --> Stopped_Idle : passenger transfer finis
 Stopped_Idle --> Stopped_DoorReleased_NotStationDetected : d. sets door release [vehicle stopped, station not detected]
 Stopped_DoorReleased_NotStationDetected --> Stopped_Idle : d. resets door release
 
-Stopped_Idle --> Stopped_DoorReleasedFallback : d. sets fallback door release [vehicle stopped]
-Stopped_DoorReleasedFallback --> Stopped_Idle : d. resets fallback door release
+Stopped_Idle --> Stopped_FallbackDoorReleased : d. sets fallback door release [vehicle stopped]
+Stopped_FallbackDoorReleased --> Stopped_Idle : d. resets fallback door release
 
 Stopped_Idle --> Stopped_EmergencyExitUsed : p. opens emergency exit
 Stopped_EmergencyExitUsed --> Stopped_Idle : d. resets emergency exit
@@ -107,14 +107,14 @@ Stopped_DoorMalfunction --> Stopped_DoorReleased_StationDetected : d. resolves m
 Stopped_DoorReleased_NotStationDetected --> Stopped_EmergencyExitUsed : p. opens emergency exit
 Stopped_EmergencyExitUsed --> Stopped_DoorReleased_NotStationDetected : d. resets emergency exit
 
-Stopped_DoorReleasedFallback --> Stopped_EmergencyExitUsed : p. opens emergency exit
-Stopped_EmergencyExitUsed --> Stopped_DoorReleasedFallback : d. resets emergency exit
+Stopped_FallbackDoorReleased --> Stopped_EmergencyExitUsed : p. opens emergency exit
+Stopped_EmergencyExitUsed --> Stopped_FallbackDoorReleased : d. resets emergency exit
 
 Stopped_DoorReleased_StationDetected --> Stopped_NotDoorReleased_DoorOpen : d. resets door release [not all doors closed]
 Stopped_NotDoorReleased_DoorOpen --> Stopped_DoorReleased_StationDetected : d. sets door release [not all doors closed]
 
-Stopped_DoorReleasedFallback --> Stopped_NotDoorReleased_DoorOpen : d. resets fallback door release [not all doors closed]
-Stopped_NotDoorReleased_DoorOpen --> Stopped_DoorReleasedFallback : d. sets fallback door release [not all doors closed]
+Stopped_FallbackDoorReleased --> Stopped_NotDoorReleased_DoorOpen : d. resets fallback door release [not all doors closed]
+Stopped_NotDoorReleased_DoorOpen --> Stopped_FallbackDoorReleased : d. sets fallback door release [not all doors closed]
 
 Stopped_NotDoorReleased_DoorOpen --> Stopped_Idle : all doors closed
 
