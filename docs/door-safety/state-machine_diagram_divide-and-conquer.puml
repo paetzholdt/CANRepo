@@ -78,8 +78,8 @@ state DrivingState {
     Moving: velocity != 0
 
 
-    Stopped --> Moving : [doors_closed and !door_release_active and !fallback_door_release_active]
-    Moving --> Stopped : [vehicle_stopped]
+    Stopped --> Moving : applying traction command [doors_closed and !door_release_active and !fallback_door_release_active]
+    Moving --> Stopped : vehicle speed reaches zero
     
 }
 
