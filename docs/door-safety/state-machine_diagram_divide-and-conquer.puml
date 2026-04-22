@@ -2,8 +2,51 @@
 
 legend left
 Produced signals:
-    DrivingState: vehicle_stopped
+    DrivingState:
+        - vehicle_stopped
 
+    StopRequestState:
+        - stop_request_set
+    
+    DoorReleaseState:
+        - door_release_active
+    
+    FallbackDoorReleaseState:
+        - fallback_door_release_active
+    
+    StationDetectionState:
+        - station_detected
+
+    DoorState:
+        - doors_closed
+
+
+Consumed signals:
+    DrivingState:
+        - doors_closed
+        - door_release_active
+        - fallback_door_release_active
+    
+    StopRequestState:
+        - doors_closed
+        - door_release_active
+        - fallback_door_release_active
+    
+    DoorReleaseState:
+        - station_detected
+        - vehicle_stopped
+    
+    FallbackDoorReleaseState:
+        - vehicle_stopped
+    
+    StationDetectionState:
+        - none
+    
+    DoorState:
+        - stop_request_set
+        - door_release_active
+        - fallback_door_release_active
+        - internal timer event
 
 endlegend
 
@@ -31,16 +74,12 @@ state DrivingState {
     }
 
     Stopped: velocity == 0
-    Stopped: spring-loaded brake active
 
     Moving: velocity != 0
-    Moving: Doors_Closed
-    Moving: DoorRelease_Inactive
-    Moving: FallbackDoorRelease_Inactive
 
 
-    Stopped --> Moving
-    Moving --> Stopped
+    Stopped --> Moving : [doors_closed and !door_release_active and !fallback_door_release_active]
+    Moving --> Stopped : [vehicle_stopped]
     
 }
 
@@ -56,10 +95,10 @@ state StopRequestState {
     StopRequest_Set: signal light on
 
 
-    StopRequest_Reset --> StopRequest_Reset : passenger presses stop button [(door_release_set or fallback_door_release_set) and vehicle_stopped] / request immediate door opening
+    StopRequest_Reset --> StopRequest_Reset : passenger presses stop button [(door_release_active or fallback_door_release_active) and vehicle_stopped] / request immediate door opening
     StopRequest_Reset --> StopRequest_Set : passenger presses stop button / activate acoustic signal
     StopRequest_Set --> StopRequest_Set : passenger presses stop button again
-    StopRequest_Set --> StopRequest_Reset : door release set and doors open
+    StopRequest_Set --> StopRequest_Reset : [(door_release_active and station_detected and !doors_closed) or (fallback_door_release_active and !doors_closed)] / request immediate door opening
 }
 
 --
@@ -75,7 +114,7 @@ state DoorReleaseState {
     DoorRelease_Active: only active inside of station perimeter
 
     DoorRelease_Inactive --> DoorRelease_Active : door release button is set [vehicle_stopped and station_detected] / doors are released
-    DoorRelease_Inactive --> DoorRelease_Inactive : door release button is set [not_vehicle_stopped or not_station_detected] / block door release, warn driver
+    DoorRelease_Inactive --> DoorRelease_Inactive : door release button is set [!vehicle_stopped or !station_detected] / block door release, warn driver
     DoorRelease_Active --> DoorRelease_Inactive : door release button is reset / clear warning
 }
 
@@ -92,7 +131,7 @@ state FallbackDoorReleaseState {
     FallbackDoorRelease_Active: can be active outside of station perimeter
 
     FallbackDoorRelease_Inactive --> FallbackDoorRelease_Active : door release button is set [vehicle_stopped] / doors are released
-    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Inactive : door release button is set [not_vehicle_stopped] / block fallback door release, warn driver
+    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Inactive : door release button is set [!vehicle_stopped] / block fallback door release, warn driver
     FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : door release button is reset / clear warning
 
 
