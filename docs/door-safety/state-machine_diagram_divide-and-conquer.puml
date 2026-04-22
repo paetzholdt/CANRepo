@@ -1,5 +1,13 @@
 @startuml state_machine_tram
 
+legend left
+Produced signals:
+    DrivingState: vehicle_stopped
+
+
+endlegend
+
+
 state DrivingState {
     [*] --> Stopped
     state Stopped
@@ -27,8 +35,8 @@ state DrivingState {
 
     Moving: velocity != 0
     Moving: Doors_Closed
-    Moving: DoorRelease_Reset
-    Moving: FallbackDoorRelease_Reset
+    Moving: DoorRelease_Inactive
+    Moving: FallbackDoorRelease_Inactive
 
 
     Stopped --> Moving
@@ -57,19 +65,37 @@ state StopRequestState {
 --
 
 state DoorReleaseState {
-    [*] --> DoorRelease_Reset
-    state DoorRelease_Reset
-    state DoorRelease_Set
+    [*] --> DoorRelease_Inactive
+    state DoorRelease_Inactive
+    state DoorRelease_Active
 
-    DoorRelease_Reset --> DoorRelease_Set : door release is set [velocity == 0] / stop request opens door
+    DoorRelease_Inactive: doors are blocked
+
+    DoorRelease_Active: doors open whenever stop is requested
+    DoorRelease_Active: only active inside of station perimeter
+
+    DoorRelease_Inactive --> DoorRelease_Active : door release button is set [vehicle_stopped and station_detected] / doors are released
+    DoorRelease_Inactive --> DoorRelease_Inactive : door release button is set [not_vehicle_stopped or not_station_detected] / block door release, warn driver
+    DoorRelease_Active --> DoorRelease_Inactive : door release button is reset / clear warning
 }
 
 --
 
 state FallbackDoorReleaseState {
-    [*] --> FallbackDoorRelease_Reset
-    state FallbackDoorRelease_Reset
-    state FallbackDoorRelease_Set
+    [*] --> FallbackDoorRelease_Inactive
+    state FallbackDoorRelease_Inactive
+    state FallbackDoorRelease_Active
+
+    FallbackDoorRelease_Inactive: doors are blocked
+
+    FallbackDoorRelease_Active: doors open whenever stop is requested
+    FallbackDoorRelease_Active: can be active outside of station perimeter
+
+    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Active : door release button is set [vehicle_stopped] / doors are released
+    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Inactive : door release button is set [not_vehicle_stopped] / block fallback door release, warn driver
+    FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : door release button is reset / clear warning
+
+
 }
 
 --
@@ -78,14 +104,16 @@ state StationDetectionState {
     [*] --> No_Station_Detected
     state Station_Detected
     state No_Station_Detected
-}
 
---
+    Station_Detected: vehicle is inside of station perimeter along its entire length
 
-state DoorDiagnosticState {
-    [*] --> Doors_Operational
-    state Doors_Operational
-    state Doors_Malfunction
+    No_Station_Detected: vehicle is outside of station perimeter
+
+
+    No_Station_Detected --> Station_Detected : tram passes signal at entrance of station
+    Station_Detected --> No_Station_Detected : tram passes signal at exit of station
+
+
 }
 
 --
@@ -93,9 +121,25 @@ state DoorDiagnosticState {
 state DoorState {
     [*] --> Doors_Closed
     state Doors_Closed
-    state Doors_Closing
+    /'state Doors_Closing'/
     state Doors_Open
-    state Doors_Opening
+    /'state Doors_Opening'/
+
+    Doors_Closed --> Doors_Open : [(door_release_active or fallback_door_release_active) and stop_request_set] / open door
+    Doors_Open --> Doors_Closed : three seconds passed after last valid opening request
+}
+
+/'
+
+--
+
+state DoorDiagnosticState {
+    [*] --> Doors_Operational
+    state Doors_Operational
+    state Doors_Malfunction
+
+    Doors_Operational --> Doors_Malfunction : Malfunction detected
+    Doors_Malfunction --> Doors_Operational : Malfunction resolved
 }
 
 --
@@ -131,5 +175,5 @@ state SpringLoadedBrakeState {
     SLB_Released --> SLB_Activating
 
 }
-
+'/
 @enduml
