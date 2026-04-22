@@ -11,25 +11,33 @@ endlegend
 
 
 state SafeState {
-    [*] --> Stopped_Idle
-    state Stopped_Idle
-    state Stopped_ImmobilizerActive {
-        state Stopped_DoorReleased_StationDetected
-        state Stopped_DoorReleased_NotStationDetected
-        state Stopped_FallbackDoorReleased
-        state Stopped_NotDoorReleased_DoorOpen
-        state Stopped_EmergencyExitUsed
+    state Stopped {
+        [*] --> Stopped_Idle
+
+        state Stopped_Idle
+        state Stopped_ImmobilizerActive {
+            state Stopped_DoorReleased_StationDetected
+            state Stopped_DoorReleased_NotStationDetected
+            state Stopped_FallbackDoorReleased
+            state Stopped_NotDoorReleased_DoorOpen
+            state Stopped_EmergencyExitUsed
+        }
     }
+
     state Moving
 }
 
-state ExceptionState {
-    state Stopped_DoorMalfunction
+
+state SpecialState {
+    state ExceptionState {
+        state DoorMalfunction
+    }
+
+    state ErrorState {
+        state Moving_DoorOpen
+    }
 }
 
-state ErrorState {
-    state Moving_DoorOpen
-}
 
 ExceptionState: manageable fault condition
 
@@ -72,10 +80,10 @@ Moving: doors are closed
 Moving: stop may be requested
 
 
-Stopped_DoorMalfunction: doors stay closed even though
-Stopped_DoorMalfunction: - door_release is set
-Stopped_DoorMalfunction: - AND stop is requested
-Stopped_DoorMalfunction: Immobilizer active
+DoorMalfunction: e.g. doors stay closed even though
+DoorMalfunction: - door_release is set
+DoorMalfunction: - AND stop is requested
+DoorMalfunction: e.g. light barrier defective
 
 
 Moving_DoorOpen: s. alerts d.
@@ -91,24 +99,8 @@ Stopped_DoorReleased_NotStationDetected --> Stopped_Idle : d. resets door releas
 Stopped_Idle --> Stopped_FallbackDoorReleased : d. sets fallback door release [vehicle stopped]
 Stopped_FallbackDoorReleased --> Stopped_Idle : d. resets fallback door release
 
-Stopped_Idle --> Stopped_EmergencyExitUsed : p. opens emergency exit
-Stopped_EmergencyExitUsed --> Stopped_Idle : d. resets emergency exit
-
 Stopped_Idle --> Moving : vehicle accelerates
 Moving --> Stopped_Idle : vehicle stops
-
-
-Stopped_DoorReleased_StationDetected --> Stopped_EmergencyExitUsed : p. opens emergency exit
-Stopped_EmergencyExitUsed --> Stopped_DoorReleased_StationDetected : d. resets emergency exit
-
-Stopped_DoorReleased_StationDetected --> Stopped_DoorMalfunction : door malfunction reported / s. warns d.
-Stopped_DoorMalfunction --> Stopped_DoorReleased_StationDetected : d. resolves malfunction
-
-Stopped_DoorReleased_NotStationDetected --> Stopped_EmergencyExitUsed : p. opens emergency exit
-Stopped_EmergencyExitUsed --> Stopped_DoorReleased_NotStationDetected : d. resets emergency exit
-
-Stopped_FallbackDoorReleased --> Stopped_EmergencyExitUsed : p. opens emergency exit
-Stopped_EmergencyExitUsed --> Stopped_FallbackDoorReleased : d. resets emergency exit
 
 Stopped_DoorReleased_StationDetected --> Stopped_NotDoorReleased_DoorOpen : d. resets door release [not all doors closed]
 Stopped_NotDoorReleased_DoorOpen --> Stopped_DoorReleased_StationDetected : d. sets door release [not all doors closed]
@@ -116,19 +108,16 @@ Stopped_NotDoorReleased_DoorOpen --> Stopped_DoorReleased_StationDetected : d. s
 Stopped_FallbackDoorReleased --> Stopped_NotDoorReleased_DoorOpen : d. resets fallback door release [not all doors closed]
 Stopped_NotDoorReleased_DoorOpen --> Stopped_FallbackDoorReleased : d. sets fallback door release [not all doors closed]
 
-Stopped_FallbackDoorReleased --> Stopped_DoorMalfunction : door malfunction reported / s. warns d.
-Stopped_DoorMalfunction --> Stopped_FallbackDoorReleased : d. resolves malfunction
+SafeState --> DoorMalfunction : door malfunction reported / s. warns d.
+DoorMalfunction --> SafeState : d. resolves malfunction
 
 Stopped_NotDoorReleased_DoorOpen --> Stopped_Idle : all doors closed
-
-Stopped_NotDoorReleased_DoorOpen --> Stopped_EmergencyExitUsed : p. opens emergency exit
-Stopped_EmergencyExitUsed --> Stopped_NotDoorReleased_DoorOpen : d. resets emergency exit
 
 Moving --> Moving : d. sets door release / s. blocks request; warns d.
 
 
 Moving --> Moving_DoorOpen : door opens while moving
-Moving_DoorOpen --> Stopped_Idle : vehicle stopped AND all doors closed
+Moving_DoorOpen --> Stopped_Idle : Error handled [vehicle stopped AND all doors closed]
 
 
 @enduml

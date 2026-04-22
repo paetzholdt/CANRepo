@@ -1,0 +1,135 @@
+@startuml state_machine_tram
+
+state DrivingState {
+    [*] --> Stopped
+    state Stopped
+    state Moving {
+        [*] --> Accelerating
+        state Accelerating
+        state Rolling
+        state Braking
+
+        Accelerating: traction command applied
+
+        Rolling: traction command idle
+
+        Braking: brake command applied
+
+
+        Accelerating --> Rolling
+        Rolling --> Accelerating
+        Rolling --> Braking
+        Braking --> Rolling
+    }
+
+    Stopped: velocity == 0
+    Stopped: spring-loaded brake active
+
+    Moving: velocity != 0
+    Moving: Doors_Closed
+    Moving: DoorRelease_Reset
+    Moving: FallbackDoorRelease_Reset
+
+
+    Stopped --> Moving
+    Moving --> Stopped
+    
+}
+
+--
+
+state StopRequestState {
+    [*] --> StopRequest_Reset
+    state StopRequest_Reset
+    state StopRequest_Set
+
+    StopRequest_Reset: signal light off
+
+    StopRequest_Set: signal light on
+
+
+    StopRequest_Reset --> StopRequest_Reset : passenger presses stop button [(door_release_set or fallback_door_release_set) and vehicle_stopped] / request immediate door opening
+    StopRequest_Reset --> StopRequest_Set : passenger presses stop button / activate acoustic signal
+    StopRequest_Set --> StopRequest_Set : passenger presses stop button again
+    StopRequest_Set --> StopRequest_Reset : door release set and doors open
+}
+
+--
+
+state DoorReleaseState {
+    [*] --> DoorRelease_Reset
+    state DoorRelease_Reset
+    state DoorRelease_Set
+
+    DoorRelease_Reset --> DoorRelease_Set : door release is set [velocity == 0] / stop request opens door
+}
+
+--
+
+state FallbackDoorReleaseState {
+    [*] --> FallbackDoorRelease_Reset
+    state FallbackDoorRelease_Reset
+    state FallbackDoorRelease_Set
+}
+
+--
+
+state StationDetectionState {
+    [*] --> No_Station_Detected
+    state Station_Detected
+    state No_Station_Detected
+}
+
+--
+
+state DoorDiagnosticState {
+    [*] --> Doors_Operational
+    state Doors_Operational
+    state Doors_Malfunction
+}
+
+--
+
+state DoorState {
+    [*] --> Doors_Closed
+    state Doors_Closed
+    state Doors_Closing
+    state Doors_Open
+    state Doors_Opening
+}
+
+--
+
+state PassengerEmergencyBrakeState {
+    [*] --> PEB_Inactive
+    state PEB_Inactive
+    state PEB_Active
+}
+
+--
+
+state PassengerEmergencyDoorReleaseState {
+    [*] --> PEDR_Inactive
+    state PEDR_Inactive
+    state PEDR_Active
+
+}
+
+--
+
+state SpringLoadedBrakeState {
+    [*] --> SLB_Active
+    state SLB_Active
+    state SLB_Activating
+    state SLB_Releasing
+    state SLB_Released
+
+    SLB_Active --> SLB_Releasing
+    SLB_Releasing --> SLB_Released
+    SLB_Releasing --> SLB_Activating
+    SLB_Activating --> SLB_Active
+    SLB_Released --> SLB_Activating
+
+}
+
+@enduml
