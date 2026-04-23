@@ -33,8 +33,8 @@ Consumed signals:
         - fallback_door_release_active
     
     DoorReleaseState:
-        - station_detected
         - vehicle_stopped
+        - station_detected
     
     FallbackDoorReleaseState:
         - vehicle_stopped
@@ -55,6 +55,7 @@ state DrivingState {
     [*] --> Stopped
     state Stopped
     state Moving {
+        /'
         [*] --> Accelerating
         state Accelerating
         state Rolling
@@ -71,15 +72,18 @@ state DrivingState {
         Rolling --> Accelerating
         Rolling --> Braking
         Braking --> Rolling
+        '/
     }
 
-    Stopped: velocity == 0
+    Stopped: output vehicle_stopped = true
+    Stopped: vehicle_speed == 0
 
-    Moving: velocity != 0
+    Moving: output vehicle_stopped = false
+    Moving: vehicle_speed != 0
 
 
-    Stopped --> Moving : applying traction command [doors_closed and !door_release_active and !fallback_door_release_active]
-    Moving --> Stopped : vehicle speed reaches zero
+    Stopped --> Moving : traction_command_applied [doors_closed and !door_release_active and !fallback_door_release_active] / apply_traction_command
+    Moving --> Stopped : vehicle_speed_reaches_zero / hold_vehicle_at_stop
     
 }
 
@@ -95,10 +99,10 @@ state StopRequestState {
     StopRequest_Set: signal light on
 
 
-    StopRequest_Reset --> StopRequest_Reset : passenger presses stop button [(door_release_active or fallback_door_release_active) and vehicle_stopped] / request immediate door opening
-    StopRequest_Reset --> StopRequest_Set : passenger presses stop button / activate acoustic signal
-    StopRequest_Set --> StopRequest_Set : passenger presses stop button again
-    StopRequest_Set --> StopRequest_Reset : [(door_release_active and station_detected and !doors_closed) or (fallback_door_release_active and !doors_closed)] / request immediate door opening
+    StopRequest_Reset --> StopRequest_Reset : passenger_stop_button_pressed [vehicle_stopped and ((door_release_active and station_detected) or fallback_door_release_active)] / trigger_door_opening
+    StopRequest_Reset --> StopRequest_Set : passenger_stop_button_pressed [!door_release_active and !fallback_door_release_active] / activate_acoustic_signal_once
+    StopRequest_Set --> StopRequest_Set : passenger_stop_button_pressed [stop_request_set] / ignore_duplicate_stop_request
+    StopRequest_Set --> StopRequest_Reset : opening_conditions_met [vehicle_stopped and ((door_release_active and station_detected) or (fallback_door_release_active))] / trigger_door_opening
 }
 
 --
@@ -168,6 +172,26 @@ state DoorState {
     Doors_Open --> Doors_Closed : three seconds passed after last valid opening request
 }
 
+--
+
+state SpringLoadedBrakeState {
+    [*] --> SLB_Active
+    state SLB_Active
+    /'state SLB_Activating
+    state SLB_Releasing'/
+    state SLB_Released
+
+    /'SLB_Active --> SLB_Releasing
+    SLB_Releasing --> SLB_Released
+    SLB_Releasing --> SLB_Activating
+    SLB_Activating --> SLB_Active
+    SLB_Released --> SLB_Activating'/
+
+    SLB_Active --> SLB_Released : traction_command_applied
+    SLB_Released --> SLB_Active : vehicle_speed_reaches_zero [vehicle_speed <= 0]
+
+}
+
 /'
 
 --
@@ -200,19 +224,5 @@ state PassengerEmergencyDoorReleaseState {
 
 --
 
-state SpringLoadedBrakeState {
-    [*] --> SLB_Active
-    state SLB_Active
-    state SLB_Activating
-    state SLB_Releasing
-    state SLB_Released
-
-    SLB_Active --> SLB_Releasing
-    SLB_Releasing --> SLB_Released
-    SLB_Releasing --> SLB_Activating
-    SLB_Activating --> SLB_Active
-    SLB_Released --> SLB_Activating
-
-}
 '/
 @enduml
