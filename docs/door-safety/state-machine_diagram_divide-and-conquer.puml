@@ -9,28 +9,27 @@ Produced signals:
         - stop_request_set
     
     DoorReleaseState:
-        - door_release_active
+        - valid_door_release
     
     FallbackDoorReleaseState:
-        - fallback_door_release_active
+        - valid_fallback_door_release
     
     StationDetectionState:
         - station_detected
 
     DoorState:
         - doors_closed
+        - stop_request_reset_conditions_met
 
 
 Consumed signals:
     DrivingState:
         - doors_closed
-        - door_release_active
-        - fallback_door_release_active
+        - valid_door_release
+        - valid_fallback_door_release
     
     StopRequestState:
-        - doors_closed
-        - door_release_active
-        - fallback_door_release_active
+        - stop_request_reset_conditions_met
     
     DoorReleaseState:
         - vehicle_stopped
@@ -44,8 +43,8 @@ Consumed signals:
     
     DoorState:
         - stop_request_set
-        - door_release_active
-        - fallback_door_release_active
+        - valid_door_release
+        - valid_fallback_door_release
         - internal timer event
 
 endlegend
@@ -82,7 +81,7 @@ state DrivingState {
     Moving: vehicle_speed != 0
 
 
-    Stopped --> Moving : traction_command_applied [doors_closed and !door_release_active and !fallback_door_release_active] / apply_traction_command
+    Stopped --> Moving : traction_command_applied [doors_closed and !valid_door_release and !valid_fallback_door_release] / apply_traction_command
     Moving --> Stopped : vehicle_speed_reaches_zero / hold_vehicle_at_stop
     
 }
@@ -94,15 +93,16 @@ state StopRequestState {
     state StopRequest_Reset
     state StopRequest_Set
 
+    StopRequest_Reset: output stop_request_set = false
     StopRequest_Reset: signal light off
 
+    StopRequest_Set: output stop_request_set = true
     StopRequest_Set: signal light on
 
 
-    StopRequest_Reset --> StopRequest_Reset : passenger_stop_button_pressed [vehicle_stopped and ((door_release_active and station_detected) or fallback_door_release_active)] / trigger_door_opening
-    StopRequest_Reset --> StopRequest_Set : passenger_stop_button_pressed [!door_release_active and !fallback_door_release_active] / activate_acoustic_signal_once
-    StopRequest_Set --> StopRequest_Set : passenger_stop_button_pressed [stop_request_set] / ignore_duplicate_stop_request
-    StopRequest_Set --> StopRequest_Reset : opening_conditions_met [vehicle_stopped and ((door_release_active and station_detected) or (fallback_door_release_active))] / trigger_door_opening
+    StopRequest_Reset --> StopRequest_Set : passenger_stop_button_pressed / activate_acoustic_signal_once
+    StopRequest_Set --> StopRequest_Set : passenger_stop_button_pressed / ignore_duplicate_stop_request
+    StopRequest_Set --> StopRequest_Reset : stop_request_reset_conditions_met
 }
 
 --
@@ -112,14 +112,18 @@ state DoorReleaseState {
     state DoorRelease_Inactive
     state DoorRelease_Active
 
+    DoorRelease_Inactive: output valid_door_release = false
     DoorRelease_Inactive: doors are blocked
 
-    DoorRelease_Active: doors open whenever stop is requested
-    DoorRelease_Active: only active inside of station perimeter
 
-    DoorRelease_Inactive --> DoorRelease_Active : door release button is set [vehicle_stopped and station_detected] / doors are released
-    DoorRelease_Inactive --> DoorRelease_Inactive : door release button is set [!vehicle_stopped or !station_detected] / block door release, warn driver
-    DoorRelease_Active --> DoorRelease_Inactive : door release button is reset / clear warning
+    DoorRelease_Active: output valid_door_release = true
+    DoorRelease_Active: only active inside of station perimeter
+    DoorRelease_Active: if tram starts moving or leaves station, validity is immediately lost
+
+    DoorRelease_Inactive --> DoorRelease_Active : door_release_button_set [vehicle_stopped and station_detected]
+    DoorRelease_Inactive --> DoorRelease_Inactive : door_release_button_set [!vehicle_stopped or !station_detected] / warn_driver
+    DoorRelease_Active --> DoorRelease_Inactive : door_release_button_reset / clear_warning
+    DoorRelease_Active --> DoorRelease_Inactive : validity_lost [!vehicle_stopped or !station_detected] / alert_driver
 }
 
 --
@@ -129,15 +133,18 @@ state FallbackDoorReleaseState {
     state FallbackDoorRelease_Inactive
     state FallbackDoorRelease_Active
 
+    FallbackDoorRelease_Inactive: output valid_fallback_door_release = false
     FallbackDoorRelease_Inactive: doors are blocked
 
-    FallbackDoorRelease_Active: doors open whenever stop is requested
+
+    FallbackDoorRelease_Active: output valid_fallback_door_release = true
     FallbackDoorRelease_Active: can be active outside of station perimeter
+    FallbackDoorRelease_Active: if tram starts moving, validity is immediately lost
 
-    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Active : door release button is set [vehicle_stopped] / doors are released
-    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Inactive : door release button is set [!vehicle_stopped] / block fallback door release, warn driver
-    FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : door release button is reset / clear warning
-
+    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Active : fallback_door_release_button_set [vehicle_stopped]
+    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Inactive : fallback_door_release_button_set [!vehicle_stopped] / warn_driver
+    FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : fallback_door_release_button_reset / clear_warning
+    FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : validity_lost [!vehicle_stopped] / alert_driver
 
 }
 
@@ -145,17 +152,18 @@ state FallbackDoorReleaseState {
 
 state StationDetectionState {
     [*] --> No_Station_Detected
-    state Station_Detected
     state No_Station_Detected
+    state Station_Detected
 
-    Station_Detected: vehicle is inside of station perimeter along its entire length
-
+    No_Station_Detected: output station_detected = false
     No_Station_Detected: vehicle is outside of station perimeter
 
+    Station_Detected: output station_detected = true
+    Station_Detected: vehicle is inside of station perimeter along its entire length
 
-    No_Station_Detected --> Station_Detected : tram passes signal at entrance of station
-    Station_Detected --> No_Station_Detected : tram passes signal at exit of station
 
+    No_Station_Detected --> Station_Detected : station_signal_detected
+    Station_Detected --> No_Station_Detected : no_station_signal_detected
 
 }
 
@@ -168,31 +176,39 @@ state DoorState {
     state Doors_Open
     /'state Doors_Opening'/
 
-    Doors_Closed --> Doors_Open : [(door_release_active or fallback_door_release_active) and stop_request_set] / open door
-    Doors_Open --> Doors_Closed : three seconds passed after last valid opening request
+    Doors_Closed: output doors_closed = true
+    Doors_Closed: output stop_request_reset_conditions_met = false
+
+    Doors_Open: output doors_closed = false
+    Doors_Open: output stop_request_reset_conditions_met = true
+
+    Doors_Closed --> Doors_Open : open_door_request [(valid_door_release || valid_fallback_door_release) && stop_request_set] / open_doors; start_timer
+    Doors_Open --> Doors_Closed : internal_timer_run_out / close_doors
+    Doors_Open --> Doors_Open : open_door_request [(valid_door_release || valid_fallback_door_release) && stop_request_set] / restart_timer
+    Doors_Closed --> Doors_Closed : open_door_request [(!valid_door_release && !valid_fallback_door_release) || !stop_request_set]
 }
 
 --
 
+/'
 state SpringLoadedBrakeState {
     [*] --> SLB_Active
     state SLB_Active
-    /'state SLB_Activating
-    state SLB_Releasing'/
+    state SLB_Activating
+    state SLB_Releasing
     state SLB_Released
 
-    /'SLB_Active --> SLB_Releasing
+    SLB_Active --> SLB_Releasing
     SLB_Releasing --> SLB_Released
     SLB_Releasing --> SLB_Activating
     SLB_Activating --> SLB_Active
-    SLB_Released --> SLB_Activating'/
+    SLB_Released --> SLB_Activating
 
     SLB_Active --> SLB_Released : traction_command_applied
     SLB_Released --> SLB_Active : vehicle_speed_reaches_zero [vehicle_speed <= 0]
 
 }
 
-/'
 
 --
 
