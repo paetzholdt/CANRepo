@@ -100,9 +100,9 @@ state StopRequestState {
     StopRequest_Set: signal light on
 
 
-    StopRequest_Reset --> StopRequest_Set : passenger_stop_button_pressed / activate_acoustic_signal_once
+    StopRequest_Reset --> StopRequest_Set : passenger_stop_button_pressed / activate_acoustic_signal_once; turn_on_stop_request_light
     StopRequest_Set --> StopRequest_Set : passenger_stop_button_pressed / ignore_duplicate_stop_request
-    StopRequest_Set --> StopRequest_Reset : stop_request_reset_conditions_met
+    StopRequest_Set --> StopRequest_Reset : stop_request_reset_conditions_met / turn_off_stop_request_light
 }
 
 --
@@ -120,10 +120,10 @@ state DoorReleaseState {
     DoorRelease_Active: only active inside of station perimeter
     DoorRelease_Active: if tram starts moving or leaves station, validity is immediately lost
 
-    DoorRelease_Inactive --> DoorRelease_Active : door_release_button_set [vehicle_stopped and station_detected]
-    DoorRelease_Inactive --> DoorRelease_Inactive : door_release_button_set [!vehicle_stopped or !station_detected] / warn_driver
-    DoorRelease_Active --> DoorRelease_Inactive : door_release_button_reset / clear_warning
-    DoorRelease_Active --> DoorRelease_Inactive : validity_lost [!vehicle_stopped or !station_detected] / alert_driver
+    DoorRelease_Inactive --> DoorRelease_Active : door_release_button_pressed [vehicle_stopped and station_detected] / turn_on_door_release_light
+    DoorRelease_Inactive --> DoorRelease_Inactive : door_release_button_pressed [!vehicle_stopped or !station_detected] / block_door_release; warn_driver_three_seconds 
+    DoorRelease_Active --> DoorRelease_Inactive : door_release_button_pressed / turn_off_door_release_light
+    DoorRelease_Active --> DoorRelease_Inactive : validity_lost [!vehicle_stopped or !station_detected] / alert_driver; turn_off_door_release_light
 }
 
 --
@@ -141,29 +141,29 @@ state FallbackDoorReleaseState {
     FallbackDoorRelease_Active: can be active outside of station perimeter
     FallbackDoorRelease_Active: if tram starts moving, validity is immediately lost
 
-    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Active : fallback_door_release_button_set [vehicle_stopped]
-    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Inactive : fallback_door_release_button_set [!vehicle_stopped] / warn_driver
-    FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : fallback_door_release_button_reset / clear_warning
-    FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : validity_lost [!vehicle_stopped] / alert_driver
+    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Active : fallback_door_release_button_pressed [vehicle_stopped] / turn_on_fallback_door_release_light
+    FallbackDoorRelease_Inactive --> FallbackDoorRelease_Inactive : fallback_door_release_button_pressed [!vehicle_stopped] / block_fallback_door_release; warn_driver_three_seconds
+    FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : fallback_door_release_button_pressed / turn_off_fallback_door_release_light
+    FallbackDoorRelease_Active --> FallbackDoorRelease_Inactive : validity_lost [!vehicle_stopped] / alert_driver; turn_off_fallback_door_release_light
 
 }
 
 --
 
 state StationDetectionState {
-    [*] --> No_Station_Detected
-    state No_Station_Detected
+    [*] --> Station_NotDetected
+    state Station_NotDetected
     state Station_Detected
 
-    No_Station_Detected: output station_detected = false
-    No_Station_Detected: vehicle is outside of station perimeter
+    Station_NotDetected: output station_detected = false
+    Station_NotDetected: vehicle is outside of station perimeter
 
     Station_Detected: output station_detected = true
     Station_Detected: vehicle is inside of station perimeter along its entire length
 
 
-    No_Station_Detected --> Station_Detected : station_signal_detected
-    Station_Detected --> No_Station_Detected : no_station_signal_detected
+    Station_NotDetected --> Station_Detected : station_begin_signal_detected
+    Station_Detected --> Station_NotDetected : station_end_signal_detected
 
 }
 
@@ -185,12 +185,12 @@ state DoorState {
     Doors_Closed --> Doors_Open : open_door_request [(valid_door_release || valid_fallback_door_release) && stop_request_set] / open_doors; start_timer
     Doors_Open --> Doors_Closed : internal_timer_run_out / close_doors
     Doors_Open --> Doors_Open : open_door_request [(valid_door_release || valid_fallback_door_release) && stop_request_set] / restart_timer
-    Doors_Closed --> Doors_Closed : open_door_request [(!valid_door_release && !valid_fallback_door_release) || !stop_request_set]
 }
 
---
 
 /'
+--
+
 state SpringLoadedBrakeState {
     [*] --> SLB_Active
     state SLB_Active
