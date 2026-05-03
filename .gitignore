@@ -1,0 +1,23 @@
+# Build-Ordner
+build/
+Debug/
+Release/
+
+# CubeIDE / Eclipse
+.metadata/
+.settings/
+*.launch
+
+# Objektdateien
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
