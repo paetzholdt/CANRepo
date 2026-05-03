@@ -71,7 +71,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	bool is_door_released = false;
+
 
   /* USER CODE END 1 */
 
@@ -95,6 +95,13 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  bool current_state = false;
+  bool last_state = false;
+
+  bool door_release_set = false;
+  char message_door_release_set[] = "Door release set\r\n";
+  char message_door_release_reset[] = "Door release reset\r\n";
+
 
   /* USER CODE END 2 */
 
@@ -102,6 +109,33 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // goal: toggle LED only on rising edge
+	  // NOTE: no debouncing yet -> multiple triggers possible
+
+
+	  // read current state of button -> RESET = LOW = pressed
+	  current_state = (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2) == GPIO_PIN_RESET); // true, if button pressed
+
+	  if (current_state != last_state) { // input change detected (edge detection)
+		  if (current_state) { // rising edge detected -> trigger toggle
+
+			  if (!door_release_set) {
+				  door_release_set = true;
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
+				  HAL_UART_Transmit(&huart2, (uint8_t*) message_door_release_set, sizeof(message_door_release_set) - 1, HAL_MAX_DELAY);
+
+			  } else {
+				  door_release_set = false;
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
+				  HAL_UART_Transmit(&huart2, (uint8_t*) message_door_release_reset, sizeof(message_door_release_reset) - 1, HAL_MAX_DELAY);
+
+			  }
+		  }
+
+		  last_state = current_state;
+	  }
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
