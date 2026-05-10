@@ -21,8 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdbool.h>
-#include <button.h>
+#include "door_release.h"
+#include "inputs.h"
 
 
 /* USER CODE END Includes */
@@ -96,17 +96,6 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  // char message_door_release_set[] = "Door release set\r\n";
-  // char message_door_release_reset[] = "Door release reset\r\n";
-
-
-  Button_t test_button = {
-		  .port = GPIOC,
-		  .gpio_pin = GPIO_PIN_2,
-		  .button_state = RELEASED_STABLE,
-		  .start_time_action = 0
-  };
-  bool is_led_on = false;
 
   /* USER CODE END 2 */
 
@@ -114,20 +103,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  button_update(&test_button);
-
-	  if (test_button.button_state == PRESSED_STABLE) {
-		  if (!is_led_on) {
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
-			  is_led_on = true;
-		  }
-
-	  } else if (test_button.button_state == RELEASED_STABLE) {
-		  if (is_led_on) {
-			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
-			  is_led_on = false;
-		  }
-	  }
+	  update_inputs();
+	  door_release_task();
 
 
     /* USER CODE END WHILE */
