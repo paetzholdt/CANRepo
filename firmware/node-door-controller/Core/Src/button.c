@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 
-#define DEBOUNCE_TIME 20U // 20ms unsigned
+static const uint32_t debounce_time_ms = 20U;
 
 
 void update_button(Button_t *button) {
@@ -26,7 +26,7 @@ void update_button(Button_t *button) {
 				break;
 			}
 
-			if ((HAL_GetTick() - button->start_time_action) >= DEBOUNCE_TIME) {
+			if ((HAL_GetTick() - button->start_time_action) >= debounce_time_ms) {
 				button->button_state = BUTTON_STATE_PRESSED_STABLE;
 
 				// Signal ausgeben
@@ -49,7 +49,7 @@ void update_button(Button_t *button) {
 				break;
 			}
 
-			if ((HAL_GetTick() - button->start_time_action) >= DEBOUNCE_TIME) {
+			if ((HAL_GetTick() - button->start_time_action) >= debounce_time_ms) {
 				button->button_state = BUTTON_STATE_RELEASED_STABLE;
 			}
 			break;

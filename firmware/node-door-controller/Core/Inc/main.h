@@ -54,8 +54,6 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
-// TODO: to be removed, when door_release.c doesn't use UART anymore
-extern UART_HandleTypeDef huart2;
 
 /* USER CODE END EFP */
 
