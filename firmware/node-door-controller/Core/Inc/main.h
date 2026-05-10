@@ -58,6 +58,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define DOOR_RELEASE_BUTTON_Pin GPIO_PIN_2
+#define DOOR_RELEASE_BUTTON_GPIO_Port GPIOC
+#define GREEN_LOOP_LED_Pin GPIO_PIN_3
+#define GREEN_LOOP_LED_GPIO_Port GPIOC
+#define DOOR_RELEASE_LED_Pin GPIO_PIN_2
+#define DOOR_RELEASE_LED_GPIO_Port GPIOB
+#define STOP_REQUEST_BUTTON_Pin GPIO_PIN_10
+#define STOP_REQUEST_BUTTON_GPIO_Port GPIOB
+#define STOP_REQUEST_LED_Pin GPIO_PIN_15
+#define STOP_REQUEST_LED_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
