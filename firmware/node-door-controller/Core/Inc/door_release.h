@@ -1,6 +1,8 @@
 #ifndef DOOR_RELEASE_H
 #define DOOR_RELEASE_H
 
+#include <stdbool.h>
+
 
 typedef enum {
 	DOOR_RELEASE_INACTIVE,
@@ -9,5 +11,7 @@ typedef enum {
 
 
 void door_release_task(void);
+
+bool is_door_release_active(void);
 
 #endif

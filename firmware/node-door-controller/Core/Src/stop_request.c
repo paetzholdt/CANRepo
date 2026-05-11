@@ -8,6 +8,11 @@
 
 static StopRequestState_t stop_request_state = STOP_REQUEST_RESET;
 
+
+bool is_stop_request_set(void) {
+	return stop_request_state == STOP_REQUEST_SET;
+}
+
 void stop_request_task(void) {
 	switch (stop_request_state) {
 		case STOP_REQUEST_RESET:
