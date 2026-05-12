@@ -1,10 +1,11 @@
-#include "hardware/inputs.h"
 #include "application/door_release.h"
+
+#include "hardware/inputs.h"
+#include "hardware/leds.h"
 
 #include <stdbool.h>
 
-// TODO: remove include later, when hardware output access is capsuled
-#include "main.h"
+
 
 static DoorReleaseState_t door_release_state = DOOR_RELEASE_INACTIVE;
 
@@ -16,22 +17,16 @@ bool is_door_release_active(void) {
 void door_release_task(void) {
 	switch (door_release_state) {
 		case DOOR_RELEASE_INACTIVE:
+			set_door_release_led(false);
 			if (get_door_release_button_event() == BUTTON_EVENT_PRESSED) {
 				door_release_state = DOOR_RELEASE_ACTIVE;
-
-				// TODO: hardware access will be outsourced
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
-
 			}
 			break;
 
 		case DOOR_RELEASE_ACTIVE:
+			set_door_release_led(true);
 			if (get_door_release_button_event() == BUTTON_EVENT_PRESSED) {
 				door_release_state = DOOR_RELEASE_INACTIVE;
-
-				// TODO: hardware access will be outsourced
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
-
 			}
 			break;
 	}
