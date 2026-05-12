@@ -1,17 +1,8 @@
-#include "door.h"
+#include "application/door_logic.h"
+#include "application/door.h"
 
 #include "stm32g0xx_hal.h"
 #include "stm32g0xx_hal_gpio.h"
-#include "door_control.h"
-
-
-/* TODO: do not insert door control logic into door.c
- * - the doors shall not know, which dependencies they have
- * - the door shall only know, if there is a valid door opening request
- * - the door will return an answer, when the doors have been successfully opened AND another, when they are closed
- */
-
-
 #include <stdbool.h>
 
 static DoorState_t door_state = DOORS_CLOSED;

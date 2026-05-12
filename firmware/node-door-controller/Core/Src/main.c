@@ -21,11 +21,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "inputs.h"
-#include "door_release.h"
-#include "stop_request.h"
-#include "door.h"
-#include "door_control.h"
+#include "application/door_logic.h"
+#include "hardware/inputs.h"
+#include "application/door_release.h"
+#include "application/stop_request.h"
+#include "application/door.h"
 
 /* USER CODE END Includes */
 

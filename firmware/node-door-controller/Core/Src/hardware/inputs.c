@@ -1,6 +1,5 @@
-#include "inputs.h"
-
-#include "button.h"
+#include <hardware/button.h>
+#include <hardware/inputs.h>
 
 
 static Button_t door_release_button = {

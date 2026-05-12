@@ -1,9 +1,7 @@
-#include "stop_request.h"
+#include "application/door_logic.h"
+#include "application/stop_request.h"
 
-#include "inputs.h"
-#include "door_control.h"
-
-// TODO: remove include later, when hardware output access is capsuled
+#include "hardware/inputs.h"
 #include "main.h"
 
 

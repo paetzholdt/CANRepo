@@ -1,5 +1,4 @@
-#include "button.h"
-
+#include <hardware/button.h>
 #include "stm32g0xx_hal_gpio.h"
 #include "stm32g0xx_hal.h"
 

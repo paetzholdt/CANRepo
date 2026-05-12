@@ -1,6 +1,6 @@
-#include "door_release.h"
+#include "hardware/inputs.h"
+#include "application/door_release.h"
 
-#include "inputs.h"
 #include <stdbool.h>
 
 // TODO: remove include later, when hardware output access is capsuled

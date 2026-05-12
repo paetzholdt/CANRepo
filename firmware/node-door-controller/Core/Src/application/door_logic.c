@@ -1,11 +1,10 @@
 // NOTE: this module will grow step by step with each new module, that is relevant to the topic of door-safety (e.g. fallback door release, station detection)
 // TODO: evaluate if this module should take care of every door-related feedback-LED?
 
-#include "door_control.h"
-
-#include "door_release.h"
-#include "stop_request.h"
-#include "door.h"
+#include "application/door_logic.h"
+#include "application/door_release.h"
+#include "application/stop_request.h"
+#include "application/door.h"
 
 #include <stdbool.h>
 

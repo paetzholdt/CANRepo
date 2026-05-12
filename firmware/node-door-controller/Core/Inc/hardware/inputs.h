@@ -1,7 +1,7 @@
 #ifndef INPUTS_H
 #define INPUTS_H
 
-#include "button.h"
+#include <hardware/button.h>
 
 void update_inputs(void);
 
