@@ -105,12 +105,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // Inputs
 	  update_inputs();
+
+	  // State updates
 	  door_release_task();
 	  stop_request_task();
-	  door_task();
+
+	  // System logic
 	  door_control_task();
 
+	  // Actuators
+	  door_task();
 
 
     /* USER CODE END WHILE */
