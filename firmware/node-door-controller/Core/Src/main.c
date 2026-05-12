@@ -21,9 +21,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "door_release.h"
 #include "inputs.h"
-
+#include "door_release.h"
+#include "stop_request.h"
+#include "door.h"
+#include "door_control.h"
 
 /* USER CODE END Includes */
 
@@ -105,6 +107,10 @@ int main(void)
   {
 	  update_inputs();
 	  door_release_task();
+	  stop_request_task();
+	  door_task();
+	  door_control_task();
+
 
 
     /* USER CODE END WHILE */

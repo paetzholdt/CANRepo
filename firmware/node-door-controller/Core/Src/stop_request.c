@@ -1,6 +1,7 @@
 #include "stop_request.h"
 
 #include "inputs.h"
+#include "door_control.h"
 
 // TODO: remove include later, when hardware output access is capsuled
 #include "main.h"
@@ -8,9 +9,8 @@
 
 static StopRequestState_t stop_request_state = STOP_REQUEST_RESET;
 
-
 bool is_stop_request_set(void) {
-	return stop_request_state == STOP_REQUEST_SET;
+	return (stop_request_state == STOP_REQUEST_SET);
 }
 
 void stop_request_task(void) {
@@ -18,14 +18,14 @@ void stop_request_task(void) {
 		case STOP_REQUEST_RESET:
 			if (get_stop_request_button_event() == BUTTON_EVENT_PRESSED) {
 				stop_request_state = STOP_REQUEST_SET;
-
-				// TODO: hardware access will be outsourced
-				HAL_GPIO_WritePin(STOP_REQUEST_BUTTON_GPIO_Port, STOP_REQUEST_BUTTON_Pin, GPIO_PIN_SET);
 			}
 			break;
 
 		case STOP_REQUEST_SET:
 			// TODO: implement state change
+			if (is_valid_open_door_command()) {
+				stop_request_state = STOP_REQUEST_RESET;
+			}
 			break;
 	}
 
