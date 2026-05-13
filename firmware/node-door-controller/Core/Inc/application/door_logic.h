@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 
-bool is_valid_open_door_command(void);
 void door_control_task(void);
 
 #endif

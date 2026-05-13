@@ -1,8 +1,6 @@
-// TODO: write door_init()
-
 #include "application/door.h"
 
-#include "application/door_logic.h"
+
 #include "hardware/leds.h"
 
 #include "stm32g0xx_hal.h"
@@ -28,29 +26,28 @@ bool are_all_doors_closed(void) {
 	return (door_state == DOORS_CLOSED);
 }
 
+void command_open_doors(void) {
+	// command opening of doors
+	// TODO: is there a chance of representing hardware or more software as doors?
+
+	// reset timer, if doors are open already
+	timestamp_begin_of_doors_open = HAL_GetTick();
+
+	door_state = DOORS_OPEN;
+}
+
 void door_task(void) {
 	switch (door_state) {
 		case DOORS_CLOSED:
 			set_green_loop_led(true);
-			if (is_valid_open_door_command()) {
-				// command opening of doors
-				// TODO: is there a chance of representing hardware or more software as doors?
-				timestamp_begin_of_doors_open = HAL_GetTick();
-				door_state = DOORS_OPEN;
-			}
 			break;
 
 		case DOORS_OPEN:
 			set_green_loop_led(false);
 
-			if (is_valid_open_door_command()) {
-				timestamp_begin_of_doors_open = HAL_GetTick();
-			}
-
 			if ((HAL_GetTick() - timestamp_begin_of_doors_open) >= duration_of_open_doors_ms) {
 				door_state = DOORS_CLOSED;
 			}
-
 			break;
 	}
 }

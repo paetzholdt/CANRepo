@@ -1,6 +1,5 @@
 #include "application/stop_request.h"
 
-#include "application/door_logic.h"
 #include "hardware/inputs.h"
 #include "hardware/leds.h"
 
@@ -13,9 +12,15 @@ void stop_request_init(void) {
 	set_stop_request_led(false);
 }
 
+
 bool is_stop_request_set(void) {
 	return (stop_request_state == STOP_REQUEST_SET);
 }
+
+void reset_stop_request(void) {
+	stop_request_state = STOP_REQUEST_RESET;
+}
+
 
 void stop_request_task(void) {
 
@@ -30,9 +35,6 @@ void stop_request_task(void) {
 
 		case STOP_REQUEST_SET:
 			set_stop_request_led(true);
-			if (is_valid_open_door_command()) {
-				stop_request_state = STOP_REQUEST_RESET;
-			}
 			break;
 	}
 
