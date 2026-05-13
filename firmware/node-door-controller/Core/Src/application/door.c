@@ -9,12 +9,18 @@
 
 #include <stdbool.h>
 
-static DoorState_t door_state = DOORS_CLOSED;
 
 static const uint32_t duration_of_open_doors_ms = 5000U;
 
-static uint32_t timestamp_begin_of_doors_open = 0;
+static DoorState_t door_state;
+static uint32_t timestamp_begin_of_doors_open;
 
+
+void door_init(void) {
+	door_state = DOORS_CLOSED;
+	timestamp_begin_of_doors_open = 0;
+	set_green_loop_led(true);
+}
 
 
 

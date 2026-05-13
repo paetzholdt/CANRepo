@@ -5,7 +5,13 @@
 #include "hardware/leds.h"
 
 
-static StopRequestState_t stop_request_state = STOP_REQUEST_RESET;
+static StopRequestState_t stop_request_state;
+
+
+void stop_request_init(void) {
+	stop_request_state = STOP_REQUEST_RESET;
+	set_stop_request_led(false);
+}
 
 bool is_stop_request_set(void) {
 	return (stop_request_state == STOP_REQUEST_SET);

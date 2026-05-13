@@ -7,8 +7,13 @@
 
 
 
-static DoorReleaseState_t door_release_state = DOOR_RELEASE_INACTIVE;
+static DoorReleaseState_t door_release_state;
 
+
+void door_release_init(void) {
+	door_release_state = DOOR_RELEASE_INACTIVE;
+	set_door_release_led(false);
+}
 
 bool is_door_release_active(void) {
 	return door_release_state == DOOR_RELEASE_ACTIVE;

@@ -10,6 +10,8 @@ typedef enum {
 } DoorReleaseState_t;
 
 
+void door_release_init(void);
+
 void door_release_task(void);
 
 bool is_door_release_active(void);

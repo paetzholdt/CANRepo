@@ -8,6 +8,7 @@ typedef enum {
 	DOORS_OPEN
 } DoorState_t;
 
+void door_init(void);
 
 void door_task(void);
 

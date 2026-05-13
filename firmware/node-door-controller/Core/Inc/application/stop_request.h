@@ -8,6 +8,9 @@ typedef enum {
 	STOP_REQUEST_SET
 } StopRequestState_t;
 
+
+void stop_request_init(void);
+
 void stop_request_task(void);
 
 bool is_stop_request_set(void);
