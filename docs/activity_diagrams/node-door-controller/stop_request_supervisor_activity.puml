@@ -1,0 +1,35 @@
+@startuml stop_request_supervisor_activity
+
+start
+
+:Receive EV_STOP_REQUEST_BUTTON_PRESSED;
+
+if (state_stop_request == STATE_STOP_REQUEST_RESET) then (true) 
+    if ((state_door_release == STATE_DOOR_RELEASE_ACTIVE || state_fallback_door_release == STATE_FALLBACK_DOOR_RELEASE_ACTIVE) && state_vehicle_movement == STATE_VEHICLE_STOPPED) then (true)
+        :Emit CMD_DOORS_OPEN;
+
+    else (false)
+        :Emit CMD_STOP_REQUEST_SET;
+    
+    endif
+
+else (false)
+    if ((state_door_release == STATE_DOOR_RELEASE_ACTIVE || state_fallback_door_release == STATE_FALLBACK_DOOR_RELEASE_ACTIVE) && state_vehicle_movement == STATE_VEHICLE_STOPPED) then (true)
+        :Emit CMD_DOORS_OPEN;
+
+        if (state_doors == STATE_DOORS_CLOSED) then (true)
+            :Emit WARN_DRIVER(door_failed_to_open);
+
+        else (false)
+            :Emit CMD_STOP_REQUEST_RESET;
+        
+        endif
+    
+    endif
+
+endif
+
+stop
+
+
+@enduml
