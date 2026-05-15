@@ -1,0 +1,32 @@
+@startuml stop_request_fsm
+legend top
+StopRequest has two functions.
+1. If the door_release is not active and the StopRequest-Button is pressed, it shall change to StopRequest_Set_State.
+2. If the door_release is active and the StopRequest-Button is pressed, it shall not change to StopRequest_Set_State, but shall open the doors.
+
+Challenge:
+The StopRequest_FSM shall not know, if the door_release is validly set. But if the StopRequest_FSM doesn't know, if the door release is validly set, it can't decide by itself, if it shall change the state.
+For now, the module DoorLogic shall decide, whether StopRequest_FSM changes state.
+
+endlegend
+
+
+
+state StopRequestFSM {
+    [*] --> StopRequest_Reset_State
+    state StopRequest_Reset_State
+    state StopRequest_Set_State
+
+    StopRequest_Reset_State: ouput state: StopRequest_Set_State 
+    StopRequest_Reset_State: signal light off
+
+    StopRequest_Set_State: signal light on
+
+
+    StopRequest_Reset_State --> StopRequest_Set_State : STOP_BUTTON_PRESSED_EVENT / emit STOP_REQUEST_SET_EVENT
+    StopRequest_Set_State --> StopRequest_Set_State : STOP_BUTTON_PRESSED_EVENT / ignore_duplicate_stop_request
+    StopRequest_Set_State --> StopRequest_Reset_State : RESET_STOP_REQUEST_COMMAND
+}
+
+
+@enduml
