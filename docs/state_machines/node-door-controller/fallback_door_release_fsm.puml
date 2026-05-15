@@ -1,0 +1,21 @@
+@startuml fallback_door_release_fsm
+
+state FallbackDoorRelease_FSM {
+    [*] --> State_FallbackDoorRelease_Inactive
+    state State_FallbackDoorRelease_Inactive
+    state State_FallbackDoorRelease_Active
+
+    State_FallbackDoorRelease_Inactive: output state_fallback_door_release_active = false
+    State_FallbackDoorRelease_Inactive: fallback_door_release_led_on = false
+
+
+    State_FallbackDoorRelease_Active: output state_fallback_door_release_active = true
+    State_FallbackDoorRelease_Active: fallback_door_release_led_on = true
+
+    State_FallbackDoorRelease_Inactive --> State_FallbackDoorRelease_Active : CMD_FALLBACK_DOOR_RELEASE_ACTIVATE
+    State_FallbackDoorRelease_Active --> State_FallbackDoorRelease_Inactive : CMD_FALLBACK_DOOR_RELEASE_DEACTIVATE
+
+}
+
+
+@enduml
