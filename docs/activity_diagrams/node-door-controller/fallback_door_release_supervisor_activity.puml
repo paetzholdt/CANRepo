@@ -1,0 +1,26 @@
+@startuml fallback_door_release_supervisor_activity
+
+start
+
+:Receive EV_FALLBACK_DOOR_RELEASE_BUTTON_PRESSED;
+
+
+if (State_FallbackDoorRelease == ACTIVE) then (true)
+    :Emit CMD_FALLBACK_DOOR_RELEASE_DEACTIVATE;
+
+
+else (false)
+
+    if (State_VehicleStopped == STOPPED) then (true) 
+        :Emit CMD_FALLBACK_DOOR_RELEASE_ACTIVATE;
+    else (false)
+        :Reject request;
+        :Warn driver;
+    endif
+
+endif
+
+
+stop
+
+@enduml
