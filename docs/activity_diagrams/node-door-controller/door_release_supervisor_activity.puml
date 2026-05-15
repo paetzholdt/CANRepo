@@ -1,0 +1,27 @@
+@startuml door_release_supervisor_activity
+
+
+start
+
+:Receive EV_DOOR_RELEASE_BUTTON_PRESSED;
+
+if (state_door_release == STATE_DOOR_RELEASE_ACTIVE) then (true)
+    :Emit CMD_DOOR_RELEASE_DEACTIVATE;
+
+else (false) 
+    if (state_vehicle_movement == STATE_VEHICLE_STOPPED && state_station_detection == STATE_STATION_DETECTED) then (true)
+        :Emit CMD_DOOR_RELEASE_ACTIVATE;
+
+    else (false)
+        :Reject request;
+        :Warn driver;
+
+    endif
+
+endif
+
+stop
+
+
+
+@enduml
