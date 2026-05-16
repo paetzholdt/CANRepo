@@ -6,7 +6,7 @@ start
 
 if (state_stop_request == STATE_STOP_REQUEST_RESET) then (true) 
     if (state_door_opening_permission == STATE_DOOR_OPENING_PERMISSION_GRANTED) then (true)
-        :Emit CMD_DOORS_OPEN;
+        :Emit RQST_DOORS_OPEN;
 
     else (false)
         :Emit CMD_STOP_REQUEST_SET;
@@ -15,11 +15,11 @@ if (state_stop_request == STATE_STOP_REQUEST_RESET) then (true)
 
 else (false)
     if (state_door_opening_permission == STATE_DOOR_OPENING_PERMISSION_GRANTED) then (true)
-        :Emit CMD_DOORS_OPEN;
+        :Emit RQST_DOORS_OPEN;
 
         ' TODO:
         ' Door opening is asynchronous
-        ' state_doors shall not be evaluated immediately after emitting CMD_DOORS_OPEN
+        ' state_doors shall not be evaluated immediately after emitting RQST_DOORS_OPEN
         ' Future improvement: introduction of separate asynchronous door supervision (e.g. EV_DOOR_OPEN_TIMEOUT)
         if (state_doors == STATE_DOORS_CLOSED) then (true)
             :Emit WARN_DRIVER(door_failed_to_open);

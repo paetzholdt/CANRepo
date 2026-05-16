@@ -1,0 +1,26 @@
+@startuml door_supervisor_activity
+
+start
+
+:Receive RQST_DOORS_OPEN;
+
+if (state_doors == STATE_DOORS_CLOSED) then (true)
+    :Emit CMD_DOORS_OPEN;
+    :Start door_timer;
+
+else (false)
+    :Restart door_timer;
+
+endif
+
+stop
+
+start
+
+:Receive EV_DOOR_TIMER_EXPIRED;
+
+:Emit CMD_DOORS_CLOSE;
+
+stop
+
+@enduml

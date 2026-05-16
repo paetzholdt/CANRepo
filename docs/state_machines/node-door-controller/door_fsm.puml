@@ -1,18 +1,17 @@
 @startuml door_fsm
-state DoorFSM {
-    [*] --> Doors_Closed_State
-    state Doors_Closed_State
+state DOOR_FSM {
+    [*] --> STATE_DOORS_CLOSED
+    state STATE_DOORS_CLOSED
     /'state Doors_Closing_State'/
-    state Doors_Open_State
+    state STATE_DOORS_OPEN
     /'state Doors_Opening_State'/
 
-    Doors_Closed_State: state output: doors_closed_state = true
+    STATE_DOORS_CLOSED: state output: state_doors = STATE_DOORS_CLOSED
 
-    Doors_Open_State: state output: doors_closed_state = false
+    STATE_DOORS_OPEN: state output: state_doors = STATE_DOORS_OPEN
 
-    Doors_Closed_State --> Doors_Open_State : OPEN_DOORS_COMMAND / open_doors; start_timer
-    Doors_Open_State --> Doors_Closed_State : DOOR_TIMER_EXPIRED_EVENT / close_doors;
-    Doors_Open_State --> Doors_Open_State : OPEN_DOORS_COMMAND / restart_timer
+    STATE_DOORS_CLOSED --> STATE_DOORS_OPEN : CMD_DOORS_OPEN
+    STATE_DOORS_OPEN --> STATE_DOORS_CLOSED : CMD_DOORS_CLOSE
 }
 
 
