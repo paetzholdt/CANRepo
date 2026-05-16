@@ -3,7 +3,7 @@
 
 
 
-state StopRequestFSM {
+state STOP_REQUEST_FSM {
     [*] --> STATE_STOP_REQUEST_RESET
     state STATE_STOP_REQUEST_RESET
     state STATE_STOP_REQUEST_SET

@@ -5,7 +5,7 @@ start
 :Receive EV_STOP_REQUEST_BUTTON_PRESSED;
 
 if (state_stop_request == STATE_STOP_REQUEST_RESET) then (true) 
-    if ((state_door_release == STATE_DOOR_RELEASE_ACTIVE || state_fallback_door_release == STATE_FALLBACK_DOOR_RELEASE_ACTIVE) && state_vehicle_movement == STATE_VEHICLE_STOPPED) then (true)
+    if (state_door_opening_permission == STATE_DOOR_OPENING_PERMISSION_GRANTED) then (true)
         :Emit CMD_DOORS_OPEN;
 
     else (false)
@@ -14,9 +14,13 @@ if (state_stop_request == STATE_STOP_REQUEST_RESET) then (true)
     endif
 
 else (false)
-    if ((state_door_release == STATE_DOOR_RELEASE_ACTIVE || state_fallback_door_release == STATE_FALLBACK_DOOR_RELEASE_ACTIVE) && state_vehicle_movement == STATE_VEHICLE_STOPPED) then (true)
+    if (state_door_opening_permission == STATE_DOOR_OPENING_PERMISSION_GRANTED) then (true)
         :Emit CMD_DOORS_OPEN;
 
+        ' TODO:
+        ' Door opening is asynchronous
+        ' state_doors shall not be evaluated immediately after emitting CMD_DOORS_OPEN
+        ' Future improvement: introduction of separate asynchronous door supervision (e.g. EV_DOOR_OPEN_TIMEOUT)
         if (state_doors == STATE_DOORS_CLOSED) then (true)
             :Emit WARN_DRIVER(door_failed_to_open);
 
@@ -24,6 +28,9 @@ else (false)
             :Emit CMD_STOP_REQUEST_RESET;
         
         endif
+    
+    else (false)
+        :Ignore duplicate stop request;
     
     endif
 

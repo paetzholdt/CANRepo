@@ -1,7 +1,7 @@
 @startuml door_release_fsm
 
 
-state DoorRelease_FSM {
+state DOOR_RELEASE_FSM {
     [*] --> STATE_DOOR_RELEASE_INACTIVE
     state STATE_DOOR_RELEASE_INACTIVE
     state STATE_DOOR_RELEASE_ACTIVE

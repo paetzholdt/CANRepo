@@ -1,6 +1,6 @@
 @startuml fallback_door_release_fsm
 
-state FallbackDoorRelease_FSM {
+state FALLBACK_DOOR_RELEASE_FSM {
     [*] --> STATE_FALLBACK_DOOR_RELEASE_INACTIVE
     state STATE_FALLBACK_DOOR_RELEASE_INACTIVE
     state STATE_FALLBACK_DOOR_RELEASE_ACTIVE
