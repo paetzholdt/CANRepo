@@ -1,0 +1,15 @@
+@startuml spring_loaded_brake_fsm
+state SPRING_LOADED_BRAKE_FSM {
+    [*] --> STATE_SLB_ACTIVE
+    state STATE_SLB_ACTIVE
+    ' state SLB_Activating
+    ' state SLB_Releasing
+    state STATE_SLB_RELEASED
+
+
+    STATE_SLB_ACTIVE --> STATE_SLB_RELEASED : CMD_SLB_RELEASE
+    STATE_SLB_RELEASED --> STATE_SLB_ACTIVE : CMD_SLB_ACTIVATE
+
+}
+
+@enduml

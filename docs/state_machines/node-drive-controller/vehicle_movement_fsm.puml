@@ -1,0 +1,39 @@
+@startuml vehicle_movement_fsm
+
+state VEHICLE_MOVEMENT_FSM {
+    [*] --> STATE_VEHICLE_STOPPED
+    state STATE_VEHICLE_STOPPED
+    state STATE_VEHICLE_MOVING {
+        /'
+        [*] --> Accelerating
+        state Accelerating
+        state Rolling
+        state Braking
+
+        Accelerating: traction command applied
+
+        Rolling: traction command idle
+
+        Braking: brake command applied
+
+
+        Accelerating --> Rolling
+        Rolling --> Accelerating
+        Rolling --> Braking
+        Braking --> Rolling
+        '/
+    }
+
+    STATE_VEHICLE_STOPPED: output state_vehicle_movement = STATE_VEHICLE_STOPPED
+    STATE_VEHICLE_STOPPED: vehicle_speed <= 0,5
+
+    STATE_VEHICLE_MOVING: output vehicle_stopped = false
+    STATE_VEHICLE_MOVING: vehicle_speed != 0
+
+
+    STATE_VEHICLE_STOPPED --> STATE_VEHICLE_MOVING : traction_command_applied [doors_closed and !valid_door_release and !valid_fallback_door_release] / apply_traction_command
+    STATE_VEHICLE_MOVING --> STATE_VEHICLE_STOPPED : vehicle_speed_reaches_zero / hold_vehicle_at_stop
+    
+}
+
+@enduml
