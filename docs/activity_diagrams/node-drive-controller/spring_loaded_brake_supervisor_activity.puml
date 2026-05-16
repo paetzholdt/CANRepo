@@ -1,0 +1,12 @@
+@startuml spring_loaded_brake_supervisor_activity
+
+start
+
+
+
+
+stop
+
+
+
+@enduml
