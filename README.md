@@ -13,13 +13,13 @@ Des Weiteren haben die Zustände der Türen bzw. des Türfreigabetasters - je na
 
 Problemstellung:
 Die Fahrer nutzen den Türfreigabetaster, um die Anforderung an der nächsten LSA auszulösen. An vielen Haltestellen ist das exakt so vorgesehen und wird in der Ausbildung so vermittelt.
-Allerdings kann es passieren, dass dieser Ablauf - "Türfreigabe schnell erneut setzen für Anforderung" - dazu führt, dass dies auch an LSAs genutzt wird, an denen das nicht vorgesehen ist, verursacht beispielsweise durch Gewöhnungseffekte. Für die Fahrgäste wäre das Risiko besonders hoch außerhalb des Haltestellenbereich nah am Individualverkehr (IV).
+Allerdings kann es passieren, dass dieser Ablauf - "Türfreigabe schnell erneut setzen für Anforderung" - dazu führt, dass dies auch an LSAs genutzt wird, an denen das nicht vorgesehen ist, verursacht beispielsweise durch Gewöhnungseffekte. Für die Fahrgäste entsteht das Risiko, dass sich die Türen unerwartet öffnen könnten, was besonders außerhalb des Haltestellenbereich nah am Individualverkehr (IV) zu gefährlichen Situationen führen kann..
 
 Lösungsidee:
 Das System bestimmt an Hand von Sensordaten, ob sich das Fahrzeug vollständig innerhalb eines Haltestellenbereichs befindet.
 - Fahrzeug innerhalb des Haltestellenbereichs: Türfreigabetaster verhält sich wie im Regelbetrieb
 - Fahrzeug außerhalb des Haltestellenbereichs: Regelbetrieb des Türfreigabetaster wird unterdrückt, der Fahrer wird informiert
-Für Notfälle oder Störungen wird zusätzlich eine separate Notfreigabe implementiert, welche bewusst vom regulären Türfreigabetaster getrennt ist, um beispielsweise zügige Evakuierungen zu ermöglichen.
+Für Notfälle oder Störungen wird zusätzlich eine separate Fallback-Türfreigabe implementiert, welche bewusst vom regulären Türfreigabetaster getrennt ist, um beispielsweise zügige Evakuierungen oder bei Ausfall der Haltstellen-Sensortechnik einen normalne Fahrgastwechsel zu ermöglichen.
 
 
 ### 2. Teil
@@ -27,7 +27,7 @@ Grundlage:
 Viele Lichtsignalanlagen verhalten sich in ihrer Schaltung "immer" wieder gleich. Dadurch können sich bei Fahrern Gewöhnungseffekte einstellen.
 
 Problemstellung:
-Sei es auf Grund von Gewöhnung oder durch eine kurze Unaufmerksamkeit, können Fahrer Halt zeigende Signale zu spät wahrnehmen oder gar komplett übersehen. Dies geschieht sehr selten, da menschliche Fehler aber nicht vollständig vermeidbar sind, führen diese selten auftretenden Situationen zu gefährlichen Situationen.
+Sei es auf Grund von Gewöhnung, durch eine kurze Unaufmerksamkeit oder eine Fehleinschätzung - Fahrer können Halt zeigende Signale zu spät wahrnehmen oder gar komplett übersehen. Dies geschieht sehr selten. Da menschliche Fehler aber nicht vollständig vermeidbar sind, kommt es in Folge solcher Momente zu besonders gefährlichen Situationen.
 
 Lösungsidee:
 Bereitstellung von streckenseitigen Signalinformationsmodulen, welche folgende Informationen bereitstellen:
@@ -36,7 +36,7 @@ Bereitstellung von streckenseitigen Signalinformationsmodulen, welche folgende I
 - aktueller Signalzustand (F0 bis F5)
 - verbleibende Zeit bis zum Signalwechsel
 
-Beim Überfahren dieses Moduls liest ein System in der Bahn diese Informationen aus und verarbeitet sie gemeinsam mit den Fahrdaten der Bahn, z.B. Geschwindigkeit und Beschleunigung. Auf Basis dieser Daten wird ermittelt, welches Signal an der LSA aktiv ist, wenn die Bahn dieses erreicht.
+Beim Überfahren dieses Moduls liest ein System in der Bahn diese Informationen aus und verarbeitet sie gemeinsam mit den Fahrdaten der Bahn, z.B. Geschwindigkeit und Beschleunigung. Auf Basis dieser Daten wird ermittelt, welches Signal an der LSA aktiv ist, wenn die Bahn diese erreicht.
 Im Rahmen dieses Projekts wird in einem solchen Fall eine Warnung an den Fahrer ausgegeben, falls das Signal F0 zeigen würde. Weiterführende Maßnahmen (automatische Bremsung oder Quittierungslogik) sind denkbar, werden aus Komplexitätsgründen zunächst aber nicht umgesetzt.
 
 ### Technologien
@@ -48,13 +48,14 @@ Für den ersten Teil des Projekts werden mindestens folgende Komponenten benöti
 - weitere elektronische Teile (LEDs, Push-Buttons, Potentiometer etc.)
 
 ### Vorgehensweise
-Stand 17.04.2026
+Stand 18.05.2026
 #### 1. Projekt-Teil
 1. Grundlegende Funktionalitäten implementieren
-    1. CAN-Bus-Kommunikation einrichten
-    2. Geschwindigkeit Zustand simulieren (== 0, > 0)
-    3. Türzustand simulieren (offen, geschlossen)
-    4. Türfreigabezustand (aktiv, inaktiv)
+    1. Modellieren der Zustandsautomaten der Fachlogik (Stopp-Taster, Türen, Türfreigabe, Fallback-Türfreigabe, Fahrzustand etc.)
+    2. Zusammensetzung der zugrundeliegenden Hardware (inkl. softwareseitig z.B. Entprellen von Buttons)
+    3. Implementierung in C der verschiedenen Zustandsautomaten
+    4. Fachlogik modellieren (Interlocks) und implementieren
+    5. CAN-Bus-Kommunikation einrichten
 2. Erweiterte Funktionalität implementieren
     1. Haltestellenbereich simulieren + Zustand der Bahn (in Haltestelle oder nicht in Haltestelle)
     2. Abhängigkeit der Türfreigabe von Zustand der Bahn
