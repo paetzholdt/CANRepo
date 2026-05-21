@@ -1,6 +1,6 @@
 #include "application/door_release.h"
 
-#include "hardware/inputs.h"
+#include "inputs/input_door_release.h"
 #include "hardware/leds.h"
 
 #include <stdbool.h>

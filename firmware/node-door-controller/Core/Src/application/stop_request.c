@@ -1,6 +1,6 @@
 #include "application/stop_request.h"
 
-#include "hardware/inputs.h"
+#include "inputs/input_stop_request.h"
 #include "hardware/leds.h"
 
 

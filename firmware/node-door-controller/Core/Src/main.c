@@ -22,10 +22,12 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "application/door_logic.h"
-#include "hardware/inputs.h"
 #include "application/door_release.h"
 #include "application/stop_request.h"
 #include "application/door.h"
+
+#include "inputs/input_door_release.h"
+#include "inputs/input_stop_request.h"
 
 /* USER CODE END Includes */
 
@@ -109,7 +111,8 @@ int main(void)
   while (1)
   {
 	  // Inputs
-	  update_inputs();
+	  input_door_release_task();
+	  input_stop_request_task();
 
 	  // State updates
 	  door_release_task();

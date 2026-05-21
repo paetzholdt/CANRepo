@@ -7,7 +7,15 @@
 
 static const uint32_t debounce_time_ms = 20U;
 
-
+/**
+ * @brief Updates the internal debounce state machine of a button.
+ *
+ * Reads the current GPIO state of the button, executes the debounce state machine and generates button events on valid transitions.
+ *
+ * This function shall be called cyclically.
+ *
+ * @param button Pointer to button instance
+ */
 void update_button(Button_t *button) {
 	bool is_button_pressed = (HAL_GPIO_ReadPin(button->port, button->gpio_pin) == GPIO_PIN_RESET); // true, if button is pressed
 
@@ -55,6 +63,18 @@ void update_button(Button_t *button) {
 	}
 }
 
+
+
+/**
+ * @brief Returns ad consumes the current button event.
+ *
+ * If a button event is pending, the event is returned and cleared.
+ * Otherwise BUTTON_EVENT_NONE is returned.
+ *
+ * @param button Pointer to button instance
+ *
+ * @return Pending button event.
+ */
 ButtonEvent_t get_button_event(Button_t *button) {
 	if (button->button_event == BUTTON_EVENT_PRESSED) {
 		button->button_event = BUTTON_EVENT_NONE;
