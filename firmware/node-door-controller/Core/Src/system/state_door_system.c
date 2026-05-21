@@ -16,3 +16,12 @@ StateStopRequest_t get_system_state_stop_request(void) {
 void set_system_state_stop_request(StateStopRequest_t state_stop_request) {
 	system_state_stop_request = state_stop_request;
 }
+
+
+StateDoorRelease_t get_system_state_door_release(void) {
+	return system_state_door_release;
+}
+
+void set_system_state_door_release(StateDoorRelease_t state_door_release) {
+	system_state_door_release = state_door_release;
+}

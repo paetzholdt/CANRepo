@@ -5,8 +5,8 @@
 
 
 typedef enum {
-	DOOR_RELEASE_INACTIVE,
-	DOOR_RELEASE_ACTIVE
+	STATE_DOOR_RELEASE_INACTIVE,
+	STATE_DOOR_RELEASE_ACTIVE
 } StateDoorRelease_t;
 
 
@@ -14,6 +14,10 @@ void door_release_init(void);
 
 void door_release_task(void);
 
-bool is_door_release_active(void);
+
+void cmd_door_release_activate(void);
+
+void cmd_door_release_deactivate(void);
+
 
 #endif

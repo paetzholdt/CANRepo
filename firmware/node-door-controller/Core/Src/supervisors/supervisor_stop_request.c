@@ -14,9 +14,9 @@ void supervisor_stop_request_task(void) {
 
 
 	switch (get_system_state_stop_request()) {
-		case STOP_REQUEST_RESET:
+		case STATE_STOP_REQUEST_RESET:
 			break;
-		case STOP_REQUEST_SET:
+		case STATE_STOP_REQUEST_SET:
 			break;
 	}
 
