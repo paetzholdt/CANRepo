@@ -1,41 +1,41 @@
 #include "application/stop_request.h"
 
-#include "inputs/input_stop_request.h"
+#include "system/state_door_system_internal.h"
 #include "hardware/leds.h"
 
+#include <stdbool.h>
 
-static StopRequestState_t stop_request_state;
+
+static StateStopRequest_t state_stop_request;
 
 
 void stop_request_init(void) {
-	stop_request_state = STOP_REQUEST_RESET;
+	state_stop_request = STOP_REQUEST_RESET;
+	set_system_state_stop_request(state_stop_request);
 	set_stop_request_led(false);
 }
 
 
-bool is_stop_request_set(void) {
-	return (stop_request_state == STOP_REQUEST_SET);
+
+void cmd_stop_request_set(void) {
+	state_stop_request = STOP_REQUEST_SET;
+	set_system_state_stop_request(state_stop_request);
 }
 
-void reset_stop_request(void) {
-	stop_request_state = STOP_REQUEST_RESET;
+void cmd_stop_request_reset(void) {
+	state_stop_request = STOP_REQUEST_RESET;
+	set_system_state_stop_request(state_stop_request);
 }
 
-
+// TODO: remove LED-management from FSM?
 void stop_request_task(void) {
-
-	switch (stop_request_state) {
+	switch (state_stop_request) {
 		case STOP_REQUEST_RESET:
 			set_stop_request_led(false);
-			if (get_stop_request_button_event() == BUTTON_EVENT_PRESSED) {
-				stop_request_state = STOP_REQUEST_SET;
-
-			}
 			break;
 
 		case STOP_REQUEST_SET:
 			set_stop_request_led(true);
 			break;
 	}
-
 }

@@ -7,31 +7,31 @@
 
 
 
-static DoorReleaseState_t door_release_state;
+static StateDoorRelease_t state_door_release;
 
 
 void door_release_init(void) {
-	door_release_state = DOOR_RELEASE_INACTIVE;
+	state_door_release = DOOR_RELEASE_INACTIVE;
 	set_door_release_led(false);
 }
 
 bool is_door_release_active(void) {
-	return door_release_state == DOOR_RELEASE_ACTIVE;
+	return state_door_release == DOOR_RELEASE_ACTIVE;
 }
 
 void door_release_task(void) {
-	switch (door_release_state) {
+	switch (state_door_release) {
 		case DOOR_RELEASE_INACTIVE:
 			set_door_release_led(false);
 			if (get_door_release_button_event() == BUTTON_EVENT_PRESSED) {
-				door_release_state = DOOR_RELEASE_ACTIVE;
+				state_door_release = DOOR_RELEASE_ACTIVE;
 			}
 			break;
 
 		case DOOR_RELEASE_ACTIVE:
 			set_door_release_led(true);
 			if (get_door_release_button_event() == BUTTON_EVENT_PRESSED) {
-				door_release_state = DOOR_RELEASE_INACTIVE;
+				state_door_release = DOOR_RELEASE_INACTIVE;
 			}
 			break;
 	}

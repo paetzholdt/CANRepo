@@ -7,7 +7,7 @@
 typedef enum {
 	DOOR_RELEASE_INACTIVE,
 	DOOR_RELEASE_ACTIVE
-} DoorReleaseState_t;
+} StateDoorRelease_t;
 
 
 void door_release_init(void);

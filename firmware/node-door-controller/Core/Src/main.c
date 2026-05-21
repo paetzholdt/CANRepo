@@ -21,7 +21,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "application/door_logic.h"
 #include "application/door_release.h"
 #include "application/stop_request.h"
 #include "application/door.h"
@@ -119,7 +118,7 @@ int main(void)
 	  stop_request_task();
 
 	  // System logic
-	  door_control_task();
+
 
 	  // Actuators
 	  door_task();
