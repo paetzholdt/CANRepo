@@ -4,18 +4,19 @@
 #include <stdbool.h>
 
 typedef enum {
-	DOORS_CLOSED,
-	DOORS_OPEN
-} DoorState_t;
+	STATE_DOORS_CLOSED,
+	STATE_DOORS_OPEN
+} StateDoors_t;
 
 
-void door_init(void);
+void doors_init(void);
 
-bool are_all_doors_closed(void);
+void doors_task(void);
 
-void command_open_doors(void);
 
-void door_task(void);
+void cmd_doors_open(void);
+
+void cmd_doors_close(void);
 
 
 #endif

@@ -98,7 +98,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  door_init();
+  doors_init();
   door_release_init();
   stop_request_init();
 
@@ -121,7 +121,7 @@ int main(void)
 
 
 	  // Actuators
-	  door_task();
+	  doors_task();
 
 
     /* USER CODE END WHILE */

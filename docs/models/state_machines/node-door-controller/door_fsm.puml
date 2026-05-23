@@ -7,8 +7,10 @@ state DOOR_FSM {
     /'state Doors_Opening_State'/
 
     STATE_DOORS_CLOSED: state output: state_doors = STATE_DOORS_CLOSED
+    STATE_DOORS_CLOSED: set_green_loop_led = true
 
     STATE_DOORS_OPEN: state output: state_doors = STATE_DOORS_OPEN
+    STATE_DOORS_OPEN: set_green_loop_led = false
 
     STATE_DOORS_CLOSED --> STATE_DOORS_OPEN : CMD_DOORS_OPEN
     STATE_DOORS_OPEN --> STATE_DOORS_CLOSED : CMD_DOORS_CLOSE
