@@ -1,11 +1,12 @@
 #ifndef STATE_DOOR_SYSTEM_INTERNAL_H
 #define STATE_DOOR_SYSTEM_INTERNAL_H
 
+
+#include "system/system_state_types.h"
+
 #include "application/stop_request.h"
 #include "application/door_release.h"
 #include "application/door.h"
-
-#include "system/state_door_system.h"
 
 void set_system_state_stop_request(StateStopRequest_t state_stop_request);
 

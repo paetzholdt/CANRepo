@@ -1,0 +1,9 @@
+#ifndef SYSTEM_STATE_TYPES_H
+#define SYSTEM_STATE_TYPES_H
+
+typedef enum {
+	STATE_DOOR_OPENING_PERMISSION_GRANTED,
+	STATE_DOOR_OPENING_PERMISSION_REVOKED
+} StateDoorOpeningPermission_t;
+
+#endif
