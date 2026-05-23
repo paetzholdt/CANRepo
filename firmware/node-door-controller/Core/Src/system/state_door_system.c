@@ -6,9 +6,12 @@
 #include "application/door_release.h"
 #include "application/door.h"
 
+
 static StateStopRequest_t system_state_stop_request;
 static StateDoorRelease_t system_state_door_release;
 static StateDoors_t system_state_doors;
+
+static StateDoorOpeningPermission_t system_state_door_opening_permission;
 
 
 StateStopRequest_t get_system_state_stop_request(void) {
@@ -35,4 +38,13 @@ StateDoors_t get_system_state_doors(void) {
 
 void set_system_state_doors(StateDoors_t state_doors) {
 	system_state_doors = state_doors;
+}
+
+
+StateDoorOpeningPermission_t get_system_state_door_opening_permission(void) {
+	return system_state_door_opening_permission;
+}
+
+void set_system_state_door_opening_permission(StateDoorOpeningPermission_t state_door_opening_permission) {
+	system_state_door_opening_permission = state_door_opening_permission;
 }

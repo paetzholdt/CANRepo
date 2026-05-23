@@ -1,0 +1,6 @@
+#ifndef SUPERVISOR_DOOR_OPENING_PERMISSION_H
+#define SUPERVISOR_DOOR_OPENING_PERMISSION_H
+
+void supervisor_door_opening_permission_task(void);
+
+#endif
