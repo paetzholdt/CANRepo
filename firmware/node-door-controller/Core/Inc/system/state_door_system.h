@@ -20,7 +20,9 @@ StateDoorOpeningPermission_t get_system_state_door_opening_permission(void);
 
 
 StateVehicleMovement_t get_system_state_vehicle_movement(void);
-
 StateVehicleMovementInfo_t get_system_state_vehicle_movement_info(void);
+
+StateStationDetection_t get_system_state_station_detection(void);
+StateStationDetectionInfo_t get_system_state_station_detection_info(void);
 
 #endif

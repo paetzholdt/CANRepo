@@ -16,6 +16,9 @@ static StateDoorOpeningPermission_t system_state_door_opening_permission;
 static StateVehicleMovement_t system_state_vehicle_movement;
 static StateVehicleMovementInfo_t system_state_vehicle_movement_info;
 
+static StateStationDetection_t system_state_station_detection;
+static StateStationDetectionInfo_t system_state_station_detection_info;
+
 
 StateStopRequest_t get_system_state_stop_request(void) {
 	return system_state_stop_request;
@@ -68,4 +71,22 @@ StateVehicleMovementInfo_t get_system_state_vehicle_movement_info(void) {
 
 void set_system_state_vehicle_movement_info(StateVehicleMovementInfo_t state_vehicle_movement_info) {
 	system_state_vehicle_movement_info = state_vehicle_movement_info;
+}
+
+
+StateStationDetection_t get_system_state_station_detection(void) {
+	return system_state_station_detection;
+}
+
+void set_system_state_station_detection(StateStationDetection_t state_station_detection) {
+	system_state_station_detection = state_station_detection;
+}
+
+
+StateStationDetectionInfo_t get_system_state_station_detection_info(void) {
+	return system_state_station_detection_info;
+}
+
+void set_system_state_station_detection_info(StateStationDetectionInfo_t state_station_detection_info) {
+	system_state_station_detection_info = state_station_detection_info;
 }

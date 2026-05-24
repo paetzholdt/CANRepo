@@ -19,7 +19,9 @@ void set_system_state_door_opening_permission(StateDoorOpeningPermission_t state
 
 
 void set_system_state_vehicle_movement(StateVehicleMovement_t state_vehicle_movement);
-
 void set_system_state_vehicle_movement_info(StateVehicleMovementInfo_t state_vehicle_movement_info);
+
+void set_system_state_station_detection(StateStationDetection_t state_station_detection);
+void set_system_state_station_detection_info(StateStationDetectionInfo_t state_station_detection_info);
 
 #endif
