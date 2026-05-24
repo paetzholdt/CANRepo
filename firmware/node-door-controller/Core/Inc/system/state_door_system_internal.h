@@ -14,6 +14,12 @@ void set_system_state_door_release(StateDoorRelease_t state_door_release);
 
 void set_system_state_doors(StateDoors_t state_doors);
 
+
 void set_system_state_door_opening_permission(StateDoorOpeningPermission_t state_door_opening_permission);
+
+
+void set_system_state_vehicle_movement(StateVehicleMovement_t state_vehicle_movement);
+
+void set_system_state_vehicle_movement_info(StateVehicleMovementInfo_t state_vehicle_movement_info);
 
 #endif

@@ -6,4 +6,15 @@ typedef enum {
 	STATE_DOOR_OPENING_PERMISSION_REVOKED
 } StateDoorOpeningPermission_t;
 
+
+typedef enum {
+	STATE_VEHICLE_MOVEMENT_STOPPED,
+	STATE_VEHICLE_MOVEMENT_MOVING
+} StateVehicleMovement_t;
+
+typedef enum {
+	STATE_VEHICLE_MOVEMENT_INFO_VALID,
+	STATE_VEHICLE_MOVEMENT_INFO_TIMED_OUT
+} StateVehicleMovementInfo_t;
+
 #endif

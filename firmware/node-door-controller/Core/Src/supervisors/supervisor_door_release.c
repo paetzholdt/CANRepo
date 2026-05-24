@@ -12,14 +12,25 @@ void supervisor_door_release_task(void) {
 		return;
 	}
 
+	StateDoorRelease_t state_door_release = get_system_state_door_release();
 
-	switch(get_system_state_door_release()) {
+	StateVehicleMovement_t state_vehicle_movement = get_system_state_vehicle_movement();
+	StateVehicleMovementInfo_t state_vehicle_movement_info = get_system_state_vehicle_movement_info();
+
+	switch(state_door_release) {
 		case STATE_DOOR_RELEASE_ACTIVE:
 			cmd_door_release_deactivate();
 			break;
 		case STATE_DOOR_RELEASE_INACTIVE:
-			// TODO: add vehicle_movement and station_detection
-			cmd_door_release_activate();
+			// TODO: add station_detection
+			if (	state_vehicle_movement == STATE_VEHICLE_MOVEMENT_STOPPED
+					&& state_vehicle_movement_info == STATE_VEHICLE_MOVEMENT_INFO_VALID) {
+				cmd_door_release_activate();
+
+			} else {
+				// TODO: Can request be rejected explicitly?
+				// TODO: emit warning to driver
+			}
 			break;
 	}
 }

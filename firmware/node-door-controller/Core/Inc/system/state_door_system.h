@@ -15,7 +15,12 @@ StateDoorRelease_t get_system_state_door_release(void);
 
 StateDoors_t get_system_state_doors(void);
 
+
 StateDoorOpeningPermission_t get_system_state_door_opening_permission(void);
 
+
+StateVehicleMovement_t get_system_state_vehicle_movement(void);
+
+StateVehicleMovementInfo_t get_system_state_vehicle_movement_info(void);
 
 #endif
