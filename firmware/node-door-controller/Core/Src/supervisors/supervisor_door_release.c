@@ -1,5 +1,7 @@
 #include "supervisors/supervisor_door_release.h"
 
+#include <stdio.h>
+
 #include "system/state_door_system.h"
 
 #include "application/door_release.h"
@@ -12,10 +14,14 @@ void supervisor_door_release_task(void) {
 		return;
 	}
 
+	// button was pressed
 	StateDoorRelease_t state_door_release = get_system_state_door_release();
 
 	StateVehicleMovement_t state_vehicle_movement = get_system_state_vehicle_movement();
 	StateVehicleMovementInfo_t state_vehicle_movement_info = get_system_state_vehicle_movement_info();
+
+	StateStationDetection_t state_station_detection = get_system_state_station_detection();
+	StateStationDetectionInfo_t state_station_detection_info = get_system_state_station_detection_info();
 
 	switch(state_door_release) {
 		case STATE_DOOR_RELEASE_ACTIVE:
@@ -24,12 +30,15 @@ void supervisor_door_release_task(void) {
 		case STATE_DOOR_RELEASE_INACTIVE:
 			// TODO: add station_detection
 			if (state_vehicle_movement == STATE_VEHICLE_MOVEMENT_STOPPED
-				&& state_vehicle_movement_info == STATE_VEHICLE_MOVEMENT_INFO_VALID) {
+				&& state_vehicle_movement_info == STATE_VEHICLE_MOVEMENT_INFO_VALID
+				&& state_station_detection == STATE_STATION_DETECTION_DETECTED
+				&& state_station_detection_info == STATE_STATION_DETECTION_INFO_VALID) {
+
 				cmd_door_release_activate();
 
 			} else {
 				// TODO: Can request be rejected explicitly?
-				// TODO: emit warning to driver
+				printf("Door Release rejected\r\n");
 			}
 			break;
 	}
