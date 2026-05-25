@@ -23,15 +23,20 @@ start
 :Cyclic stop request supervision;
 
 if (state_stop_request == SET) then (true)
-    if ((state_door_release == ACTIVE || state_fallback_door_release == ACTIVE) && state_doors == OPEN) then (true)
-        :Emit cmd_stop_request_reset;
+    if (state_door_release == ACTIVE || state_fallback_door_release == ACTIVE) then (true)
+
+        if (state_doors == CLOSED) then (true)
+            :Emit RQST_DOORS_OPEN;
+        else
+            :Emit cmd_stop_request_reset;
+        endif
 
     else (false)
         :Do nothing;
     endif
 
 else (false)
-:Do nothing;
+    :Do nothing;
 endif
 
 stop
