@@ -12,8 +12,8 @@ state DOOR_FSM {
     STATE_DOORS_OPEN: state output: state_doors = STATE_DOORS_OPEN
     STATE_DOORS_OPEN: set_green_loop_led = false
 
-    STATE_DOORS_CLOSED --> STATE_DOORS_OPEN : CMD_DOORS_OPEN
-    STATE_DOORS_OPEN --> STATE_DOORS_CLOSED : CMD_DOORS_CLOSE
+    STATE_DOORS_CLOSED --> STATE_DOORS_OPEN : cmd_doors_open
+    STATE_DOORS_OPEN --> STATE_DOORS_CLOSED : cmd_doors_close
 }
 
 

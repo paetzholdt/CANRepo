@@ -5,14 +5,14 @@ start
 :Receive EV_FALLBACK_DOOR_RELEASE_BUTTON_PRESSED;
 
 
-if (state_fallback_door_release == STATE_FALLBACK_DOOR_RELEASE_ACTIVE) then (true)
+if (state_fallback_door_release == ACTIVE) then (true)
     :Emit cmd_fallback_door_release_deactivate;
 
 
 else (false)
 
-    if (state_vehicle_movement == STATE_VEHICLE_STOPPED
-        && state_vehicle_movement_info == STATE_INFO_VALID) then (true) 
+    if (state_vehicle_movement == STOPPED
+        && state_vehicle_movement_info == VALID) then (true) 
         :Emit cmd_fallback_door_release_activate;
     else (false)
         :Reject request;

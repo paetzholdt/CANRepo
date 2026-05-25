@@ -5,12 +5,15 @@ start
 
 :Receive EV_DOOR_RELEASE_BUTTON_PRESSED;
 
-if (state_door_release == STATE_DOOR_RELEASE_ACTIVE) then (true)
-    :Emit CMD_DOOR_RELEASE_DEACTIVATE;
+if (state_door_release == ACTIVE) then (true)
+    :Emit cmd_door_release_deactivate;
 
 else (false) 
-    if (state_vehicle_movement == STATE_VEHICLE_STOPPED && state_station_detection == STATE_STATION_DETECTED) then (true)
-        :Emit CMD_DOOR_RELEASE_ACTIVATE;
+    if (state_vehicle_movement == STOPPED
+        && state_vehicle_movement_info == VALID
+        && state_station_detection == DETECTED
+        && state_station_detection_info == VALID) then (true)
+        :Emit cmd_door_release_activate;
 
     else (false)
         :Reject request;

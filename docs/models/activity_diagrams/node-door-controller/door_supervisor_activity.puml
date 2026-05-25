@@ -4,14 +4,24 @@ start
 
 :Receive RQST_DOORS_OPEN;
 
-if (state_doors == STATE_DOORS_CLOSED) then (true)
-    :Emit CMD_DOORS_OPEN;
-    :Start door_timer;
+if (state_door_opening_permission == GRANTED) then (true)
+    if (state_doors == CLOSED) then (true)
+        :Emit cmd_doors_open;
+        :Start door_timer;
+
+    else (false)
+        :Restart door_timer;
+
+    endif
 
 else (false)
-    :Restart door_timer;
+    :Emit warning, that doors are not allowed to open;
+
 
 endif
+
+
+
 
 stop
 
@@ -19,7 +29,10 @@ start
 
 :Receive EV_DOOR_TIMER_EXPIRED;
 
-:Emit CMD_DOORS_CLOSE;
+'Note: there would be checks, if e.g. the light barriers are free and working,
+' but since this is not the point of this project, it is omitted due to the complexity of the implementation
+
+:Emit cmd_doors_close;
 
 stop
 
