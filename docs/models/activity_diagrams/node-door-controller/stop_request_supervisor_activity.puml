@@ -16,18 +16,6 @@ if (state_stop_request == RESET) then (true)
 else (false)
     if (state_door_opening_permission == GRANTED) then (true)
         :Emit RQST_DOORS_OPEN;
-
-        ' TODO:
-        ' Door opening is asynchronous
-        ' state_doors shall not be evaluated immediately after emitting RQST_DOORS_OPEN
-        ' Future improvement: introduction of separate asynchronous door supervision (e.g. EV_DOOR_OPEN_TIMEOUT)
-        if (state_doors == CLOSED) then (true)
-            :Emit WARN_DRIVER(door_failed_to_open);
-
-        else (false)
-            :Emit cmd_stop_request_reset;
-        
-        endif
     
     else (false)
         :Ignore duplicate stop request;
@@ -36,6 +24,25 @@ else (false)
 
 endif
 
+stop
+
+
+start
+
+:Cyclic stop request supervision;
+
+if (state_stop_request == SET) then (true)
+    if ((state_door_release == ACTIVE || state_fallback_door_release == ACTIVE) && state_doors == OPEN) then (true)
+
+        :Emit cmd_stop_request_reset;
+
+    else (false)
+    :Do nothing;
+    endif
+
+else (false)
+:Do nothing;
+endif
 stop
 
 
