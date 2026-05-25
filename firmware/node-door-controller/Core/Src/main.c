@@ -237,23 +237,23 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GREEN_LOOP_LED_GPIO_Port, GREEN_LOOP_LED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GREEN_LOOP_LED_Pin|FALLBACK_DOOR_RELEASE_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, DOOR_RELEASE_LED_Pin|STOP_REQUEST_LED_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : DOOR_RELEASE_BUTTON_Pin */
-  GPIO_InitStruct.Pin = DOOR_RELEASE_BUTTON_Pin;
+  /*Configure GPIO pins : DOOR_RELEASE_BUTTON_Pin FALLBACK_DOOR_RELEASE_BUTTON_Pin */
+  GPIO_InitStruct.Pin = DOOR_RELEASE_BUTTON_Pin|FALLBACK_DOOR_RELEASE_BUTTON_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(DOOR_RELEASE_BUTTON_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : GREEN_LOOP_LED_Pin */
-  GPIO_InitStruct.Pin = GREEN_LOOP_LED_Pin;
+  /*Configure GPIO pins : GREEN_LOOP_LED_Pin FALLBACK_DOOR_RELEASE_LED_Pin */
+  GPIO_InitStruct.Pin = GREEN_LOOP_LED_Pin|FALLBACK_DOOR_RELEASE_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GREEN_LOOP_LED_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DOOR_RELEASE_LED_Pin STOP_REQUEST_LED_Pin */
   GPIO_InitStruct.Pin = DOOR_RELEASE_LED_Pin|STOP_REQUEST_LED_Pin;
