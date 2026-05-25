@@ -1,8 +1,6 @@
 #ifndef DOOR_RELEASE_H
 #define DOOR_RELEASE_H
 
-#include <stdbool.h>
-
 
 typedef enum {
 	STATE_DOOR_RELEASE_INACTIVE,

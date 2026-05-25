@@ -11,9 +11,9 @@
  *
  * This module does not implement application or safety logic.
  */
+#include "inputs/input_door_release.h"
 
 #include "hardware/button.h"
-#include "inputs/input_door_release.h"
 
 
 /**

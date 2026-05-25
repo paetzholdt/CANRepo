@@ -4,9 +4,6 @@
 #include "inputs/input_door_release.h"
 #include "hardware/leds.h"
 
-#include <stdbool.h>
-
-
 
 static StateDoorRelease_t state_door_release;
 

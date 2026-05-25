@@ -9,6 +9,7 @@
 
 static StateStopRequest_t system_state_stop_request;
 static StateDoorRelease_t system_state_door_release;
+static StateFallbackDoorRelease_t system_state_fallback_door_release;
 static StateDoors_t system_state_doors;
 
 static StateDoorOpeningPermission_t system_state_door_opening_permission;
@@ -35,6 +36,15 @@ StateDoorRelease_t get_system_state_door_release(void) {
 
 void set_system_state_door_release(StateDoorRelease_t state_door_release) {
 	system_state_door_release = state_door_release;
+}
+
+
+StateFallbackDoorRelease_t get_system_state_fallback_door_release(void) {
+	return system_state_fallback_door_release;
+}
+
+void set_system_state_fallback_door_release(StateFallbackDoorRelease_t state_fallback_door_release) {
+	system_state_fallback_door_release = state_fallback_door_release;
 }
 
 

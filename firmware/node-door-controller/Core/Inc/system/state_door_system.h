@@ -6,12 +6,15 @@
 
 #include "application/stop_request.h"
 #include "application/door_release.h"
+#include "application/fallback_door_release.h"
 #include "application/door.h"
 
 
 StateStopRequest_t get_system_state_stop_request(void);
 
 StateDoorRelease_t get_system_state_door_release(void);
+
+StateFallbackDoorRelease_t get_system_state_fallback_door_release(void);
 
 StateDoors_t get_system_state_doors(void);
 

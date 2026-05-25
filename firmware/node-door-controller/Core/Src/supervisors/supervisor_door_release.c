@@ -23,8 +23,8 @@ void supervisor_door_release_task(void) {
 			break;
 		case STATE_DOOR_RELEASE_INACTIVE:
 			// TODO: add station_detection
-			if (	state_vehicle_movement == STATE_VEHICLE_MOVEMENT_STOPPED
-					&& state_vehicle_movement_info == STATE_VEHICLE_MOVEMENT_INFO_VALID) {
+			if (state_vehicle_movement == STATE_VEHICLE_MOVEMENT_STOPPED
+				&& state_vehicle_movement_info == STATE_VEHICLE_MOVEMENT_INFO_VALID) {
 				cmd_door_release_activate();
 
 			} else {

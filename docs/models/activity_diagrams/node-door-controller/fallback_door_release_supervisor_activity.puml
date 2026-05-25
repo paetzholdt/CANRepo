@@ -6,13 +6,14 @@ start
 
 
 if (state_fallback_door_release == STATE_FALLBACK_DOOR_RELEASE_ACTIVE) then (true)
-    :Emit CMD_FALLBACK_DOOR_RELEASE_DEACTIVATE;
+    :Emit cmd_fallback_door_release_deactivate;
 
 
 else (false)
 
-    if (state_vehicle_movement == STATE_VEHICLE_STOPPED) then (true) 
-        :Emit CMD_FALLBACK_DOOR_RELEASE_ACTIVATE;
+    if (state_vehicle_movement == STATE_VEHICLE_STOPPED
+        && state_vehicle_movement_info == STATE_INFO_VALID) then (true) 
+        :Emit cmd_fallback_door_release_activate;
     else (false)
         :Reject request;
         :Warn driver;
