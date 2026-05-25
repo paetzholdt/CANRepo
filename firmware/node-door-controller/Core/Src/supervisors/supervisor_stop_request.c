@@ -28,10 +28,26 @@ static void process_stop_request_button_event(StateStopRequest_t state_stop_requ
 	}
 }
 
-static void check_conditions_stop_request_reset(void) {
-	if ((get_system_state_door_release() == STATE_DOOR_RELEASE_ACTIVE || get_system_state_fallback_door_release() == STATE_FALLBACK_DOOR_RELEASE_ACTIVE)
-					&& get_system_state_doors() == STATE_DOORS_OPEN) {
-		cmd_stop_request_reset();
+static void check_conditions_state_stop_request(void) {
+	StateStopRequest_t state_stop_request = get_system_state_stop_request();
+
+	// return if stop request is not set
+	if (state_stop_request == STATE_STOP_REQUEST_RESET) {
+		return;
+	}
+
+	StateDoorRelease_t state_door_release = get_system_state_door_release();
+	StateFallbackDoorRelease_t state_fallback_door_release = get_system_state_fallback_door_release();
+
+
+	if (state_door_release == STATE_DOOR_RELEASE_ACTIVE || state_fallback_door_release == STATE_FALLBACK_DOOR_RELEASE_ACTIVE) {
+		StateDoors_t state_doors = get_system_state_doors();
+
+		if (state_doors == STATE_DOORS_CLOSED) {
+			rqst_doors_open();
+		} else {
+			cmd_stop_request_reset();
+		}
 	}
 }
 
@@ -46,7 +62,7 @@ void supervisor_stop_request_task(void) {
 	}
 
 	if (state_stop_request == STATE_STOP_REQUEST_SET) {
-		check_conditions_stop_request_reset();
+		check_conditions_state_stop_request();
 	}
 }
 

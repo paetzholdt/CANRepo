@@ -11,16 +11,16 @@ static StateFallbackDoorRelease_t state_fallback_door_release;
 void fallback_door_release_init(void) {
 	state_fallback_door_release = STATE_FALLBACK_DOOR_RELEASE_INACTIVE;
 	set_system_state_fallback_door_release(state_fallback_door_release);
-	// TODO add LED-call, when LED is implemented -> set_fallback_door_release_led(false);
+	set_fallback_door_release_led(false);
 }
 
 void fallback_door_release_task(void) {
 	switch(state_fallback_door_release) {
 		case STATE_FALLBACK_DOOR_RELEASE_INACTIVE:
-			// TODO set_fallback_door_release(false);
+			set_fallback_door_release_led(false);
 			break;
 		case STATE_FALLBACK_DOOR_RELEASE_ACTIVE:
-			// TODO set_fallback_door_release(true);
+			set_fallback_door_release_led(true);
 			break;
 	}
 }

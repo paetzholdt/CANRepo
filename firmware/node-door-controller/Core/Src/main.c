@@ -21,12 +21,24 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "inputs/input_door_release.h"
+#include "inputs/input_fallback_door_release.h"
+#include "inputs/input_stop_request.h"
+
+#include "communication/source_vehicle_movement.h"
+#include "communication/source_station_detection.h"
+
+#include "supervisors/supervisor_door_release.h"
+#include "supervisors/supervisor_fallback_door_release.h"
+#include "supervisors/supervisor_door_opening_permission.h"
+#include "supervisors/supervisor_stop_request.h"
+#include "supervisors/supervisor_door.h"
+
 #include "application/door_release.h"
+#include "application/fallback_door_release.h"
 #include "application/stop_request.h"
 #include "application/door.h"
 
-#include "inputs/input_door_release.h"
-#include "inputs/input_stop_request.h"
 
 /* USER CODE END Includes */
 
@@ -100,6 +112,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   doors_init();
   door_release_init();
+  fallback_door_release_init();
   stop_request_init();
 
 
@@ -111,14 +124,24 @@ int main(void)
   {
 	  // Inputs
 	  input_door_release_task();
+	  input_fallback_door_release_task();
 	  input_stop_request_task();
+
+	  // Read communication input (mocked)
+	  mock_vehicle_movement_task();
+	  mock_station_detection_task();
+
+	  // Supervisors
+	  supervisor_door_release_task();
+	  supervisor_fallback_door_release_task();
+	  supervisor_door_opening_permission_task();
+	  supervisor_stop_request_task();
+	  supervisor_door_task();
 
 	  // State updates
 	  door_release_task();
+	  fallback_door_release_task();
 	  stop_request_task();
-
-	  // System logic
-
 
 	  // Actuators
 	  doors_task();

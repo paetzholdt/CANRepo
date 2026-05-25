@@ -11,6 +11,12 @@ Led_t door_release_led = {
 		.current_state = false
 };
 
+Led_t fallback_door_release_led = {
+		.port = FALLBACK_DOOR_RELEASE_LED_GPIO_Port,
+		.pin = FALLBACK_DOOR_RELEASE_LED_Pin,
+		.current_state = false
+};
+
 Led_t stop_request_led = {
 		.port = STOP_REQUEST_LED_GPIO_Port,
 		.pin = STOP_REQUEST_LED_Pin,
@@ -40,6 +46,11 @@ void set_led(Led_t* led, bool shall_be_on) {
 
 void set_door_release_led(bool shall_be_on) {
 	set_led(&door_release_led, shall_be_on);
+}
+
+
+void set_fallback_door_release_led(bool shall_be_on) {
+	set_led(&fallback_door_release_led, shall_be_on);
 }
 
 
