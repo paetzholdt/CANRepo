@@ -15,13 +15,16 @@
 #include "hardware/button.h"
 #include "inputs/input_stop_request.h"
 
+// necessary for label of button
+#include "main.h"
+
 
 /**
  * @brief Internal stop request button instance.
  */
 static Button_t stop_request_button = {
-		.port = GPIOB,
-		.gpio_pin = GPIO_PIN_10,
+		.port = STOP_REQUEST_BUTTON_GPIO_Port,
+		.gpio_pin = STOP_REQUEST_BUTTON_Pin,
 		.button_state = BUTTON_STATE_RELEASED_STABLE,
 		.start_time_action = 0,
 		.button_event = BUTTON_EVENT_NONE

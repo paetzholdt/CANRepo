@@ -16,12 +16,15 @@
 #include "hardware/button.h"
 
 
+// necessary for label of button
+#include "main.h"
+
 /**
  * @brief Internal door release button instance.
  */
 static Button_t door_release_button = {
-		.port = GPIOC,
-		.gpio_pin = GPIO_PIN_2,
+		.port = DOOR_RELEASE_BUTTON_GPIO_Port,
+		.gpio_pin = DOOR_RELEASE_BUTTON_Pin,
 		.button_state = BUTTON_STATE_RELEASED_STABLE,
 		.start_time_action = 0,
 		.button_event = BUTTON_EVENT_NONE

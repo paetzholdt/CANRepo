@@ -2,9 +2,16 @@
 
 #include "hardware/button.h"
 
-// TODO define hardware in MX and implement here
-static Button_t fallback_door_release_button = {
+// necessary for label of button
+#include "main.h"
 
+
+static Button_t fallback_door_release_button = {
+		.port = FALLBACK_DOOR_RELEASE_BUTTON_GPIO_Port,
+		.gpio_pin = FALLBACK_DOOR_RELEASE_BUTTON_Pin,
+		.button_state = BUTTON_STATE_RELEASED_STABLE,
+		.start_time_action = 0,
+		.button_event = BUTTON_EVENT_NONE
 };
 
 
