@@ -27,12 +27,21 @@ stop
 
 start
 
-:Receive EV_DOOR_TIMER_EXPIRED;
+:Cyclic check_door_timer;
 
-'Note: there would be checks, if e.g. the light barriers are free and working,
+'Note: there would be additional checks, like "are the light barriers are free and working?",
 ' but since this is not the point of this project, it is omitted due to the complexity of the implementation
 
-:Emit cmd_doors_close;
+if (state_doors != CLOSED) then (true)
+    if (has_timer_run_out) then (true)
+        :Emit cmd_doors_close;
+    else (false)
+        :Do nothing;
+    endif
+else (false)
+:Do nothing;
+
+endif
 
 stop
 
