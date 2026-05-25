@@ -1,5 +1,5 @@
 // this module is based on the file docs/models/requirements/node_door_controller/state_door_opening_permission_interlock
-// TODO: add fallback_door_release, station_detection and vehicle_movement
+// TODO: add station_detection and vehicle_movement
 
 #include "supervisors/supervisor_door_opening_permission.h"
 
@@ -12,7 +12,7 @@ static StateDoorOpeningPermission_t state_door_opening_permission = STATE_DOOR_O
 
 
 void supervisor_door_opening_permission_task(void) {
-	// TODO: fallback_door_release, station_detection and vehicle_movement will be added
+	// TODO: station_detection and vehicle_movement will be added
 	if (get_system_state_door_release() == STATE_DOOR_RELEASE_ACTIVE
 			|| get_system_state_fallback_door_release() == STATE_FALLBACK_DOOR_RELEASE_ACTIVE) {
 		state_door_opening_permission = STATE_DOOR_OPENING_PERMISSION_GRANTED;

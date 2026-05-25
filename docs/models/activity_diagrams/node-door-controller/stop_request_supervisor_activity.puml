@@ -1,48 +1,39 @@
 @startuml stop_request_supervisor_activity
 
 start
-
 :Receive EV_STOP_REQUEST_BUTTON_PRESSED;
 
-if (state_stop_request == RESET) then (true) 
-    if (state_door_opening_permission == GRANTED) then (true)
-        :Emit RQST_DOORS_OPEN;
-
-    else (false)
-        :Emit cmd_stop_request_set;
-    
-    endif
+if (state_door_opening_permission == GRANTED) then (true)
+    :Emit RQST_DOORS_OPEN;
 
 else (false)
-    if (state_door_opening_permission == GRANTED) then (true)
-        :Emit RQST_DOORS_OPEN;
-    
+    if (state_stop_request == RESET) then (true)
+        :Emit cmd_stop_request_set;
+
     else (false)
         :Ignore duplicate stop request;
-    
-    endif
 
+    endif
 endif
 
 stop
 
 
 start
-
 :Cyclic stop request supervision;
 
 if (state_stop_request == SET) then (true)
     if ((state_door_release == ACTIVE || state_fallback_door_release == ACTIVE) && state_doors == OPEN) then (true)
-
         :Emit cmd_stop_request_reset;
 
     else (false)
-    :Do nothing;
+        :Do nothing;
     endif
 
 else (false)
 :Do nothing;
 endif
+
 stop
 
 

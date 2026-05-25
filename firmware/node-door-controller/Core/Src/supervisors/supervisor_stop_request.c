@@ -1,32 +1,52 @@
 #include "supervisors/supervisor_stop_request.h"
 
+#include <stdio.h>
 
-#include "system/system_state_types.h"
+
 #include "system/state_door_system.h"
+#include "system/door_requests.h"
 
 
 #include "application/stop_request.h"
 #include "inputs/input_stop_request.h"
 
+
+static void process_stop_request_button_event(StateStopRequest_t state_stop_request) {
+	StateDoorOpeningPermission_t state_door_opening_permission = get_system_state_door_opening_permission();
+
+	switch (state_door_opening_permission) {
+		case STATE_DOOR_OPENING_PERMISSION_GRANTED:
+				rqst_doors_open();
+			break;
+		case STATE_DOOR_OPENING_PERMISSION_REVOKED:
+			if (state_stop_request == STATE_STOP_REQUEST_RESET) {
+				cmd_stop_request_set();
+			} else {
+				printf("Ignore duplicate stop request\r\n");
+			}
+			break;
+	}
+}
+
+static void check_conditions_stop_request_reset(void) {
+	if ((get_system_state_door_release() == STATE_DOOR_RELEASE_ACTIVE || get_system_state_fallback_door_release() == STATE_FALLBACK_DOOR_RELEASE_ACTIVE)
+					&& get_system_state_doors() == STATE_DOORS_OPEN) {
+		cmd_stop_request_reset();
+	}
+}
+
+
 void supervisor_stop_request_task(void) {
 	// return if no stop request button was pressed
 	ButtonEvent_t button_event = get_stop_request_button_event();
-	if (button_event != BUTTON_EVENT_PRESSED) {
-		return;
+	StateStopRequest_t state_stop_request = get_system_state_stop_request();
+
+	if (button_event == BUTTON_EVENT_PRESSED) {
+		process_stop_request_button_event(state_stop_request);
 	}
 
-
-	switch (get_system_state_stop_request()) {
-		case STATE_STOP_REQUEST_RESET:
-			if (get_system_state_door_opening_permission() == STATE_DOOR_OPENING_PERMISSION_GRANTED) {
-				// request doors open
-			} else {
-				cmd_stop_request_set();
-			}
-			break;
-		case STATE_STOP_REQUEST_SET:
-			break;
+	if (state_stop_request == STATE_STOP_REQUEST_SET) {
+		check_conditions_stop_request_reset();
 	}
-
-
 }
+

@@ -6,7 +6,6 @@
 #include "stm32g0xx_hal.h"
 
 #include "system/door_requests.h"
-#include "system/system_state_types.h"
 #include "system/state_door_system.h"
 
 static uint32_t timestamp_begin_of_doors_open = 0;
