@@ -1,4 +1,64 @@
-# Projekt
+# Tram Safety Control Prototype
+
+This repository documents the design and implementation of a rail-oriented embedded safety project inspired by real tram operating procedures.
+
+The project focuses on safety-critical local door control logic, modeled and implemented on STM32. The long-term goal is to extend the system into a distributed multi-node architecture using CAN communication.
+
+## Current Milestone
+26.05.2026
+A first hardware-validated proof of concept has been achieved for the 'node-door-controller'.
+
+The current implementation covers the local safety and interaction logic for:
+- door_release (Türfreigabe)
+    - allows door opening when station is detected and the vehicle is stopped
+- fallback_door_release (Fb-Türfreigabe)
+    - allows door opening when station detection failed, but driver considers situation safe (vehicle needs to be stopped as well)
+- stop_request (Haltewunsch)
+    - is set when a passenger presses the Stopp-Button
+    - opens doors when either (or even both) of the door releases has been activated successfully
+- door (Tür)
+    - are represented by the so called Green-Loop-LED
+    - green light indicates that all doors are closed
+
+
+
+The logic has been implemented on an STM32 Nucleo-G0B1RE and tested on real hardware (breadboard, LEDs, push-buttons) which represents the basic door control present in a real tram.
+The observed hardware behaviour matches the modeled and intended software behaviour.
+
+At this stage, the node-door-controller is a standalone local proof of concept:
+- local supervisor logic is implemented
+- fundamental state transitions are modeled and implemented in firmware
+- button inputs and LED outputs are wired and validated on hardware
+- the interaction between door release, fallback door release, stop request and door supervision behaves as expected
+
+### Current limitations:
+While this milestone represents a local proof of concept, it is not the complete distributed system.
+
+
+- remote sources are mocked
+    - vehicle_movement and station_detection are not yet read from other nodes, but hard coded in the communication-directory -> changing the values there produces the expected, functionally correct outputs on the hardware and in the UART-interface
+- implementation of other nodes (e.g. node-drive-controller) do not yet exist
+- CAN-communication is missing completely at this point
+
+### Hardware Validation
+Images of the current state are stored at `docs/progress/node-door-controller/20260526_proof_of_concept`.
+![doors closed](docs/progress/node-door-controller/20260526_proof_of_concept/01_doorsClosed.jpeg)
+all doors closed, no stop request set, no active door release
+
+![doors closed, stop request set](docs/progress/node-door-controller/20260526_proof_of_concept/02_doorsClosed_stopRequestSet.jpeg)
+passenger stop request is set while door remain closed
+
+![door release set, doors open, stop request reset](docs/progress/node-door-controller/20260526_proof_of_concept/03_doorReleaseSet_doorsOpen_stopRequestReset.jpeg)
+door release was activated, doors open -> stop request is reset
+
+
+![example of door releases are working independently](docs/progress/node-door-controller/20260526_proof_of_concept/04C_door_releases_working_independently.jpeg)
+example showing that regular door release and fallback door release are handled independently
+
+---
+
+Following is a more detailed project description in German:
+
 ## Projektursprung
 Bei meiner Arbeit als Straßenbahnfahrer kamen mir zwei Ideen, von denen ich mir erhoffe, dass sie die Sicherheit der Fahrgäste, Fahrer und Personen im Umfeld der Straßenbahn erhöhen können.
 Da ich Angewandte Informatik studiere, möchte ich versuchen, diese Ideen in einem industrienahen Modell umzusetzen.
