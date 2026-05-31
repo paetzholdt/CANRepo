@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+#include <stdint.h>
 
 /* USER CODE END Includes */
 
@@ -94,6 +96,8 @@ int main(void)
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  HAL_StatusTypeDef adc_status;
+  uint32_t adc_value;
 
   /* USER CODE END 2 */
 
@@ -101,6 +105,20 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // instructions for ADC found in Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc.c at line 137 ff.
+	  HAL_ADC_Start(&hadc1);
+	  adc_status = HAL_ADC_PollForConversion(&hadc1, 5);
+	  if (adc_status != HAL_OK) {
+		  printf("Error during adc-poll\r\n");
+	  } else {
+		  adc_value = HAL_ADC_GetValue(&hadc1);
+		  printf("ADC-Wert ist: %lu\r\n", adc_value);
+	  }
+	  HAL_ADC_Stop(&hadc1);
+
+
+	  HAL_Delay(10);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
