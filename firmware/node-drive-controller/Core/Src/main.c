@@ -21,8 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
 #include <stdint.h>
+#include "hardware/potentiometer.h"
 
 /* USER CODE END Includes */
 
@@ -96,8 +96,12 @@ int main(void)
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_StatusTypeDef adc_status;
-  uint32_t adc_value;
+  static uint32_t wait_time = 10;
+
+  static uint32_t last_potentiometer_sample_tick = 0U;
+  static uint32_t now_tick;
+
+
 
   /* USER CODE END 2 */
 
@@ -105,19 +109,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  // instructions for ADC found in Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc.c at line 137 ff.
-	  HAL_ADC_Start(&hadc1);
-	  adc_status = HAL_ADC_PollForConversion(&hadc1, 5);
-	  if (adc_status != HAL_OK) {
-		  printf("Error during adc-poll\r\n");
-	  } else {
-		  adc_value = HAL_ADC_GetValue(&hadc1);
-		  printf("ADC-Wert ist: %lu\r\n", adc_value);
+	  now_tick = HAL_GetTick();
+
+	  if ((now_tick - last_potentiometer_sample_tick) < wait_time) {
+		  continue;
 	  }
-	  HAL_ADC_Stop(&hadc1);
 
-
-	  HAL_Delay(10);
+	  potentiometer_task();
+	  last_potentiometer_sample_tick = HAL_GetTick();
 
     /* USER CODE END WHILE */
 
