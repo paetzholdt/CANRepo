@@ -1,0 +1,12 @@
+@startuml traction_controller_supervisor_activity
+
+start
+
+
+
+
+stop
+
+
+
+@enduml
