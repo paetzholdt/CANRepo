@@ -1,10 +1,48 @@
 @startuml traction_controller_fsm
 
+legend top
+1.  every state needs to be connected to every other state,
+    since in theory it is possible to move the traction controller so fast
+    that the states in between two distant states are not registered by the system
+2.  state transitions are not labeled, because states are just representative of the traction controller
+    - the traction controller often is just a lever, which can be moved by the driver at any point in time
+    - while moving the lever is not guarded, the guards are implemented in the reaction to the lever position according to the state of the tram
+endlegend
+
 state TRACTION_CONTROLLER_FSM {
     state STATE_TRACTION_CONTROLLER_IDLE
     state STATE_TRACTION_CONTROLLER_TRACTION
     state STATE_TRACTION_CONTROLLER_BRAKE
     state STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE
+
+
+    STATE_TRACTION_CONTROLLER_IDLE: rqst_traction_idle
+
+    STATE_TRACTION_CONTROLLER_TRACTION: rqst_traction_traction
+
+    STATE_TRACTION_CONTROLLER_BRAKE: rqst_traction_brake
+    STATE_TRACTION_CONTROLLER_BRAKE: only rqst, since more braking power can already be requested otherwise (automatically)
+
+    STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE: issue immediate cmd_traction_emergency_brake
+    STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE: emergency braking shall always be possible manually (no usual rqst)
+
+
+    [*] --> STATE_TRACTION_CONTROLLER_IDLE
+    STATE_TRACTION_CONTROLLER_IDLE --> STATE_TRACTION_CONTROLLER_TRACTION
+    STATE_TRACTION_CONTROLLER_IDLE --> STATE_TRACTION_CONTROLLER_BRAKE
+    STATE_TRACTION_CONTROLLER_IDLE --> STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE
+
+    STATE_TRACTION_CONTROLLER_TRACTION --> STATE_TRACTION_CONTROLLER_BRAKE
+    STATE_TRACTION_CONTROLLER_TRACTION --> STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE
+    STATE_TRACTION_CONTROLLER_TRACTION --> STATE_TRACTION_CONTROLLER_IDLE
+
+    STATE_TRACTION_CONTROLLER_BRAKE --> STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE
+    STATE_TRACTION_CONTROLLER_BRAKE --> STATE_TRACTION_CONTROLLER_IDLE
+    STATE_TRACTION_CONTROLLER_BRAKE --> STATE_TRACTION_CONTROLLER_TRACTION
+
+    STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE --> STATE_TRACTION_CONTROLLER_IDLE
+    STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE --> STATE_TRACTION_CONTROLLER_TRACTION
+    STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE --> STATE_TRACTION_CONTROLLER_BRAKE
 }
 
 @enduml
