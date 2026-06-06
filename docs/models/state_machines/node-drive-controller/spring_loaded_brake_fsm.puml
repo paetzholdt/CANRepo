@@ -1,10 +1,42 @@
 @startuml spring_loaded_brake_fsm
+
+legend top
+1.  In order to provide a fail-safe braking mechanism, spring loaded brakes achieve full braking power, when they are "inactive".
+    In order to release the spring loaded brakes of a tram, a spring is loaded by a pump - usually by applying a voltage to it.
+    (Spring loaded brakes can also be released by pumping manually, but that is only done, when there are technical errors.)
+    Thanks to that system a tram will always be able to brake, even if it loses all power (from the battery).
+2.  Transition are not labeled in detail, since the core logic will be modelled in a supervisor model
+endlegend
+
 state SPRING_LOADED_BRAKE_FSM {
-    [*] --> STATE_SLB_ACTIVE
     state STATE_SLB_ACTIVE
-    ' state SLB_Activating
-    ' state SLB_Releasing
+    state STATE_SLB_ACTIVATING
+    state STATE_SLB_RELEASING
     state STATE_SLB_RELEASED
+
+
+    STATE_SLB_ACTIVE: output: slb_active
+    STATE_SLB_ACTIVE: this state is also the fail-safe end state, if the vehicle loses all power from the battery (release force is lost)
+
+    STATE_SLB_ACTIVATING: output: slb_activating
+
+    STATE_SLB_RELEASING: output: slb_releasing
+
+    STATE_SLB_RELEASED: output: slb_released
+
+
+    [*] --> STATE_SLB_ACTIVE: tram powered on
+    STATE_SLB_ACTIVE --> [*]: tram powered off
+
+    STATE_SLB_ACTIVE --> STATE_SLB_RELEASING
+    STATE_SLB_RELEASING --> STATE_SLB_RELEASED
+
+    STATE_SLB_RELEASED --> STATE_SLB_ACTIVATING
+    STATE_SLB_ACTIVATING --> STATE_SLB_ACTIVE
+
+
+    STATE_SLB_ACTIVATING --> STATE_SLB_RELEASING : activating slb is reversed
+    STATE_SLB_RELEASING --> STATE_SLB_ACTIVATING : releasing slb is reversed
 
 }
 
