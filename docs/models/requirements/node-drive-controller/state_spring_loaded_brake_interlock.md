@@ -1,22 +1,24 @@
 
 # Requirements
 spring loaded brake shall be applied if:
-- vehicle_velocity is negative
-- OR vehicle_velocity below 0.5 km/h
+- vehicle_velocity is negative (below v_negative_stop_deadband)
+- OR vehicle_velocity is in between v_negative_stop_deadband and v_positive_stop_deadband AND state_traction_controller is not TRACTION
 - OR vehicle_velocity is below 7 km/h AND traction_command_input is BRAKE
-- OR state_door_release is ACTIVE
-- OR state_fallback_door_release is ACTIVE
-- OR state_doors is OPEN
+- OR state_traction_controller is EMERGENCY_BRAKE
+- OR state_door_safety is UNSAFE
 
 
 # Boolean Logic
 
 if (
-    vehicle_velocity < 0.5
-	|| (vehicle_velocity < 7.0 && state_traction_command == BRAKE)
-	|| state_door_release == ACTIVE
-	|| state_fallback_door_release == ACTIVE
-	|| state_doors == OPEN
+    vehicle_velocity < v_negative_stop_deadband
+	|| (vehicle_velocity >= v_negative_stop_deadband && vehicle_velocity <= v_positive_stop_deadband) && state_traction_controller != TRACTION
+	|| (vehicle_velocity < 7.0 && state_traction_controller == BRAKE)
+	|| state_traction_controller == EMERGENCY_BRAKE
+	|| state_door_safety == UNSAFE
+
 ) {
     state_slb_application_required = true;
+} else {
+	state_slb_application_required = false;
 }

@@ -20,15 +20,11 @@ state VEHICLE_MOVEMENT_FSM {
 
 
         state STATE_VEHICLE_ROLLING_BACKWARDS
-        state STATE_VEHICLE_MOVING_NEAR_STOP
         state STATE_VEHICLE_MOVING_LOW_SPEED
         state STATE_VEHICLE_MOVING_CRUISING_SPEED
 
-        STATE_VEHICLE_STOPPED --> STATE_VEHICLE_MOVING_NEAR_STOP: vehicle starts moving [v > v_positive_stop_deadband]
-        STATE_VEHICLE_MOVING_NEAR_STOP --> STATE_VEHICLE_STOPPED
-        
-        STATE_VEHICLE_MOVING_NEAR_STOP --> STATE_VEHICLE_MOVING_LOW_SPEED
-        STATE_VEHICLE_MOVING_LOW_SPEED --> STATE_VEHICLE_MOVING_NEAR_STOP
+        STATE_VEHICLE_STOPPED --> STATE_VEHICLE_MOVING_LOW_SPEED: vehicle starts moving [v > v_positive_stop_deadband]
+        STATE_VEHICLE_MOVING_LOW_SPEED --> STATE_VEHICLE_STOPPED
 
         STATE_VEHICLE_MOVING_LOW_SPEED --> STATE_VEHICLE_MOVING_CRUISING_SPEED
         STATE_VEHICLE_MOVING_CRUISING_SPEED --> STATE_VEHICLE_MOVING_LOW_SPEED
@@ -42,10 +38,7 @@ state VEHICLE_MOVEMENT_FSM {
         STATE_VEHICLE_ROLLING_BACKWARDS: this state is possible, but absolutely undesirable
         STATE_VEHICLE_ROLLING_BACKWARDS: issue immediate maximum braking power
 
-        STATE_VEHICLE_MOVING_NEAR_STOP: v_positive_stop_deadband < v <= 1 km/h
-        STATE_VEHICLE_MOVING_NEAR_STOP: output: vehicle_near_stop
-
-        STATE_VEHICLE_MOVING_LOW_SPEED: 1 km/h < v <= 7 km/h
+        STATE_VEHICLE_MOVING_LOW_SPEED: v_positive_stop_deadband < v <= 7 km/h
         STATE_VEHICLE_MOVING_LOW_SPEED: output: vehicle_low_speed
 
         STATE_VEHICLE_MOVING_CRUISING_SPEED: v > 7 km/h
