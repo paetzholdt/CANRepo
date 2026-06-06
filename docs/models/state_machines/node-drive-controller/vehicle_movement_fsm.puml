@@ -1,27 +1,56 @@
 @startuml vehicle_movement_fsm
 
+legend top
+1.  This FSM represents the physical reality, that velocity states can not be skipped.
+    BUT sensors or software might not register each state transition!
+    -> Therefore reactions to current states shall never be under any circumstance dependent on "correct"ly registered state transtions!
+
+2. Maybe hysteresis will be necessary
+endlegend
+
 state VEHICLE_MOVEMENT_FSM {
-    [*] --> STATE_VEHICLE_STOPPED
     state STATE_VEHICLE_STOPPED
+    [*] --> STATE_VEHICLE_STOPPED: tram powered on
+    STATE_VEHICLE_STOPPED --> [*]: tram powered off
+
+    STATE_VEHICLE_STOPPED: v_negative_stop_deadband <= v <= v_positive_stop_deadband
+    STATE_VEHICLE_STOPPED: output: vehicle_stopped
+
     state STATE_VEHICLE_MOVING {
-        /'
-        [*] --> Accelerating
-        state Accelerating
-        state Rolling
-        state Braking
-
-        Accelerating: traction command applied
-
-        Rolling: traction command idle
-
-        Braking: brake command applied
 
 
-        Accelerating --> Rolling
-        Rolling --> Accelerating
-        Rolling --> Braking
-        Braking --> Rolling
-        '/
+        state STATE_VEHICLE_ROLLING_BACKWARDS
+        state STATE_VEHICLE_MOVING_NEAR_STOP
+        state STATE_VEHICLE_MOVING_LOW_SPEED
+        state STATE_VEHICLE_MOVING_CRUISING_SPEED
+
+        STATE_VEHICLE_STOPPED --> STATE_VEHICLE_MOVING_NEAR_STOP: vehicle starts moving [v > v_positive_stop_deadband]
+        STATE_VEHICLE_MOVING_NEAR_STOP --> STATE_VEHICLE_STOPPED
+        
+        STATE_VEHICLE_MOVING_NEAR_STOP --> STATE_VEHICLE_MOVING_LOW_SPEED
+        STATE_VEHICLE_MOVING_LOW_SPEED --> STATE_VEHICLE_MOVING_NEAR_STOP
+
+        STATE_VEHICLE_MOVING_LOW_SPEED --> STATE_VEHICLE_MOVING_CRUISING_SPEED
+        STATE_VEHICLE_MOVING_CRUISING_SPEED --> STATE_VEHICLE_MOVING_LOW_SPEED
+
+        STATE_VEHICLE_STOPPED --> STATE_VEHICLE_ROLLING_BACKWARDS: vehicle starts rolling [v < v_negative_stop_deadband]
+        STATE_VEHICLE_ROLLING_BACKWARDS --> STATE_VEHICLE_STOPPED
+
+
+        STATE_VEHICLE_ROLLING_BACKWARDS: v < v_negative_stop_deadband
+        STATE_VEHICLE_ROLLING_BACKWARDS: output: vehicle_rolling_backwards
+        STATE_VEHICLE_ROLLING_BACKWARDS: this state is possible, but absolutely undesirable
+        STATE_VEHICLE_ROLLING_BACKWARDS: issue immediate maximum braking power
+
+        STATE_VEHICLE_MOVING_NEAR_STOP: v_positive_stop_deadband < v <= 1 km/h
+        STATE_VEHICLE_MOVING_NEAR_STOP: output: vehicle_near_stop
+
+        STATE_VEHICLE_MOVING_LOW_SPEED: 1 km/h < v <= 7 km/h
+        STATE_VEHICLE_MOVING_LOW_SPEED: output: vehicle_low_speed
+
+        STATE_VEHICLE_MOVING_CRUISING_SPEED: v > 7 km/h
+        STATE_VEHICLE_MOVING_CRUISING_SPEED: output: vehicle_cruising_speed
+        STATE_VEHICLE_MOVING_CRUISING_SPEED: limited by max_cruising_speed (e.g. 80 km/h) or throttling (e.g. to 50 km/h)
     }
 }
 
