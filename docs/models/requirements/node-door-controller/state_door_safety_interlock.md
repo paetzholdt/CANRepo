@@ -1,6 +1,6 @@
 
 # Requirements
-door_safety_state shall only be SAFE, if
+state_door_safety shall only be SAFE, if
 - doors are CLOSED
 - AND door release is NOT active
 - AND fallback door release is NOT active
@@ -16,3 +16,6 @@ if (
 } else {
 	state_door_safety = UNSAFE
 }
+
+## Note
+If at a later stage this project will achieve a stage above beginner level, this interlock could model more differentiating states next to the ones currently given, e.g. UNKNOWN or SAFETY_SYSTEM_OVERRIDDEN
