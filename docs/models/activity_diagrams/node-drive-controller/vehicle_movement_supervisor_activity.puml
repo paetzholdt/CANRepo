@@ -1,0 +1,41 @@
+@startuml vehicle_movement_supervisor_activity
+
+start
+:Cyclic vehicle velocity check
+    - read vehicle_velocity
+    - read vehicle_velocity_info;
+
+
+if (vehicle_velocity_info != VALID) then (true)
+    :state_vehicle_movement = UNKNOWN;
+    :state_vehicle_movement_info = INVALID;
+
+else (false)
+    :state_vehicle_movement_info = VALID;
+
+    if (vehicle_velocity < v_negative_stop_deadband) then (true)
+        :state_vehicle_movement = ROLLING_BACKWARDS;
+
+    elseif (vehicle_velocity >= v_negative_stop_deadband && vehicle_velocity <= v_positive_stop_deadband) then (true)
+        :state_vehicle_movement = STOPPED;
+
+    elseif (vehicle_velocity > v_positive_stop_deadband && vehicle_velocity <= 7.0) then (true)
+        :state_vehicle_movement = LOW_SPEED;
+
+    elseif (vehicle_velocity > 7.0) then (true)
+        :state_vehicle_movement = CRUISING_SPEED;
+    else (false)
+        :state_vehicle_movement = UNKNOWN;
+        :state_vehicle_movement_info = INVALID;
+        :Emit error message: "check for parameterisation errors";
+
+    endif
+    
+endif
+
+:Emit state_vehicle_movement;
+:Emit state_vehicle_movement_info;
+
+stop
+
+@enduml
