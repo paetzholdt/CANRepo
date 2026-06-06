@@ -1,9 +1,37 @@
 @startuml traction_controller_supervisor_activity
 
 start
+:Cyclic traction controller check;
+:read traction_controller_position;
+:read traction_controller_position_info;
 
+if (traction_controller_position_info != VALID) then (true)
+    :state_traction_controller = UNKNOWN;
+    :state_traction_controller_info = INVALID;
 
+else (false)
+    :state_traction_controller_info = VALID;
 
+    if (traction_controller_position == -101) then (true)
+        :state_traction_controller = EMERGENCY_BRAKE;
+
+    elseif (traction_controller_position >= -100 && traction_controller_position <= -1) then (true)
+        :state_traction_controller = BRAKE;
+
+    elseif (traction_controller_position == 0) then (true)
+        :state_traction_controller = IDLE;
+
+    elseif (traction_controller_position >= 1 && traction_controller_position <= 100) then (true)
+        :state_traction_controller = TRACTION;
+
+    else (false)
+        :state_traction_controller = UNKNOWN;
+        :state_traction_controller_info = INVALID;
+
+    endif
+endif
+:Emit state_traction_controller;
+:Emit state_traction_controller_info;
 
 stop
 
