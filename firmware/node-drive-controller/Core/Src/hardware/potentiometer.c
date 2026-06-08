@@ -14,9 +14,8 @@ static PotentiometerStatus_t potentiometer_status;
 
 static PotentiometerStatus_t read_potentiometer(void) {
 	// instructions for ADC found in Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc.c at line 137 ff.
-
 	// TODO: implement check for errors
-	HAL_ADC_Start(&hadc1);
+	adc_status = HAL_ADC_Start(&hadc1);
 
 	adc_status = HAL_ADC_PollForConversion(&hadc1, 5);
 	if (adc_status != HAL_OK) {
@@ -36,6 +35,11 @@ static PotentiometerStatus_t read_potentiometer(void) {
 
 
 void potentiometer_init(void) {
+	adc_status = HAL_ADCEx_Calibration_Start(&hadc1);
+	if (adc_status != HAL_OK) {
+		printf("Error during adc-calibration in potentiometer-initialization");
+	}
+
 	potentiometer_status = read_potentiometer();
 	if (potentiometer_status == POTENTIOMETER_STATUS_ERROR) {
 		printf("Error during initialization of potentiometer\r\n");
