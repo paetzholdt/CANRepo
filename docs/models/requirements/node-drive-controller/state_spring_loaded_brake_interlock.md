@@ -7,6 +7,9 @@ spring loaded brake shall be applied if:
 - OR state_traction_controller is EMERGENCY_BRAKE
 - OR state_door_safety is UNSAFE
 
+### Note
+Modern trams additionally can make use of standstill torque of e.g. their three-phase induction motors. Yet, spring loaded brakes are still required to be able to hold the tram at standstill at any necessary gradient, since trams must have a brake-system that can hold the tram by itself even in case of loss of all power.
+
 
 # Boolean Logic
 
