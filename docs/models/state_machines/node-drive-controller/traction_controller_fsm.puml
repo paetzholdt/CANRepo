@@ -16,15 +16,13 @@ state TRACTION_CONTROLLER_FSM {
     state STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE
 
 
-    STATE_TRACTION_CONTROLLER_IDLE: rqst_traction_idle
+    STATE_TRACTION_CONTROLLER_IDLE: output: state_traction_controller = IDLE
 
-    STATE_TRACTION_CONTROLLER_TRACTION: rqst_traction_traction
+    STATE_TRACTION_CONTROLLER_TRACTION: output: state_traction_controller = TRACTION
 
-    STATE_TRACTION_CONTROLLER_BRAKE: rqst_traction_brake
-    STATE_TRACTION_CONTROLLER_BRAKE: only rqst, since more braking power can already be requested otherwise (automatically)
+    STATE_TRACTION_CONTROLLER_BRAKE: output: state_traction_controller = BRAKE
 
-    STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE: issue immediate cmd_traction_emergency_brake
-    STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE: emergency braking shall always be possible manually (no usual rqst)
+    STATE_TRACTION_CONTROLLER_EMERGENCY_BRAKE: output: state_traction_controller = EMERGENCY_BRAKE
 
 
     [*] --> STATE_TRACTION_CONTROLLER_IDLE
