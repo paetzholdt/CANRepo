@@ -1,0 +1,36 @@
+@startuml engine_controller_supervisor_activity
+
+start
+:Cyclic traction_controller_supervisor_activity;
+:Read state_traction_controller;
+:Read state_traction_controller_info;
+:Read state_vehicle_movement;
+:Read state_vehicle_movement_info;
+
+if (state_traction_controller_info == UNKNOWN
+    || state_traction_controller == EMERGENCY_BRAKE
+    || state_vehicle_movement_info == INVALID
+    || state_vehicle_movement == ROLLING_BACKWARDS) then (true)
+    :CMD_ENGINE_BRAKE_FULL();
+
+elseif (state_traction_controller == BRAKE) then (true)
+    :CMD_ENGINE_BRAKE(percentage);
+
+elseif (state_traction_controller == IDLE) then (true)
+    :CMD_ENGINE_IDLE();
+
+elseif (state_traction_controller == TRACTION) then (true)
+    if (state_traction_lock == INACTIVE) then (true)
+        :CMD_ENGINE_TRACTION(percentage);
+    else (false)
+        :CMD_ENGINE_IDLE;
+        :Warn driver;
+    endif
+
+else (false)
+    :CMD_ENGINE_BRAKE_FULL;
+endif
+
+stop
+
+@enduml
