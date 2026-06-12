@@ -9,34 +9,34 @@ legend top
 endlegend
 
 state SPRING_LOADED_BRAKE_FSM {
-    state STATE_SLB_ACTIVE
-    state STATE_SLB_ACTIVATING
+    state STATE_SLB_APPLIED
+    state STATE_SLB_APPLYING
     state STATE_SLB_RELEASING
     state STATE_SLB_RELEASED
 
 
-    STATE_SLB_ACTIVE: output: slb_active
-    STATE_SLB_ACTIVE: this state is also the fail-safe end state, if the vehicle loses all power from the battery (release force is lost)
+    STATE_SLB_APPLIED: output: slb_applied
+    STATE_SLB_APPLIED: this state is also the fail-safe end state, if the vehicle loses all power from the battery (release force is lost)
 
-    STATE_SLB_ACTIVATING: output: slb_activating
+    STATE_SLB_APPLYING: output: slb_applying
 
     STATE_SLB_RELEASING: output: slb_releasing
 
     STATE_SLB_RELEASED: output: slb_released
 
 
-    [*] --> STATE_SLB_ACTIVE: tram powered on
-    STATE_SLB_ACTIVE --> [*]: tram powered off
+    [*] --> STATE_SLB_APPLIED: tram powered on
+    STATE_SLB_APPLIED --> [*]: tram powered off
 
-    STATE_SLB_ACTIVE --> STATE_SLB_RELEASING
+    STATE_SLB_APPLIED --> STATE_SLB_RELEASING
     STATE_SLB_RELEASING --> STATE_SLB_RELEASED
 
-    STATE_SLB_RELEASED --> STATE_SLB_ACTIVATING
-    STATE_SLB_ACTIVATING --> STATE_SLB_ACTIVE
+    STATE_SLB_RELEASED --> STATE_SLB_APPLYING
+    STATE_SLB_APPLYING --> STATE_SLB_APPLIED
 
 
-    STATE_SLB_ACTIVATING --> STATE_SLB_RELEASING : activating slb is reversed
-    STATE_SLB_RELEASING --> STATE_SLB_ACTIVATING : releasing slb is reversed
+    STATE_SLB_APPLYING --> STATE_SLB_RELEASING : applying slb is reversed
+    STATE_SLB_RELEASING --> STATE_SLB_APPLYING : releasing slb is reversed
 
 }
 
