@@ -5,7 +5,8 @@ legend top
     In order to release the spring loaded brakes of a tram, a spring is loaded by a pump - usually by applying a voltage to it.
     (Spring loaded brakes can also be released by pumping manually, but that is only done, when there are technical errors.)
     Thanks to that system a tram will always be able to brake, even if it loses all power (from the battery).
-2.  Transition are not labeled in detail, since the core logic will be modelled in a supervisor model
+2.  Transitions are not labeled in detail, since the core logic will be modelled in a supervisor model
+3.  Loss of power is a global physical transition from each state towards STATE_SLB_APPLIED. These transition are omitted to keep this diagram readable.
 endlegend
 
 state SPRING_LOADED_BRAKE_FSM {
@@ -13,16 +14,25 @@ state SPRING_LOADED_BRAKE_FSM {
     state STATE_SLB_APPLYING
     state STATE_SLB_RELEASING
     state STATE_SLB_RELEASED
+    state STATE_SLB_HOLDING
 
 
     STATE_SLB_APPLIED: output: slb_applied
     STATE_SLB_APPLIED: this state is also the fail-safe end state, if the vehicle loses all power from the battery (release force is lost)
+    STATE_SLB_APPLIED: braking force = 100%
 
     STATE_SLB_APPLYING: output: slb_applying
+    STATE_SLB_APPLYING: braking force increasing
 
     STATE_SLB_RELEASING: output: slb_releasing
+    STATE_SLB_RELEASING: braking force decreasing
 
     STATE_SLB_RELEASED: output: slb_released
+    STATE_SLB_RELEASED: braking force = 0%
+
+    STATE_SLB_HOLDING: output: slb_holding
+    STATE_SLB_HOLDING: 0% < braking force < 100%
+    STATE_SLB_HOLDING: stable intermediate braking force
 
 
     [*] --> STATE_SLB_APPLIED: tram powered on
@@ -38,6 +48,11 @@ state SPRING_LOADED_BRAKE_FSM {
     STATE_SLB_APPLYING --> STATE_SLB_RELEASING : applying slb is reversed
     STATE_SLB_RELEASING --> STATE_SLB_APPLYING : releasing slb is reversed
 
+    STATE_SLB_HOLDING --> STATE_SLB_APPLYING : more braking power requested
+    STATE_SLB_APPLYING --> STATE_SLB_HOLDING : requested braking power reached
+
+    STATE_SLB_HOLDING --> STATE_SLB_RELEASING : less braking power requested
+    STATE_SLB_RELEASING --> STATE_SLB_HOLDING : requested braking power reached
 }
 
 @enduml
