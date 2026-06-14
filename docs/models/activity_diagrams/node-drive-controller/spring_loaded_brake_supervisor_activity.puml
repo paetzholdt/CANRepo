@@ -1,7 +1,32 @@
 @startuml spring_loaded_brake_supervisor_activity
+legend top
+TODO: how to handle sensor failure of position of spring loaded brake
+
+FULL_BRAKE_PERCENTAGE = 100
+TARGET_PERCENTAGE = 1..99 (read from specific position of traction controller)
+NO_BRAKE_PERCENTAGE = 0
+endlegend
+
 
 start
+:Cyclic spring loaded brake supervision;
 
+if (state_spring_loaded_brake_force_required == FULL_BRAKE) then (true)
+    :cmd_slb_application(FULL_BRAKE_PERCENTAGE);
+
+elseif (state_spring_loaded_brake_force_required == MODERATE_BRAKE) then (true)
+    :Read TARGET_PERCENTAGE from drive_controller;
+    :cmd_slb_application(TARGET_PERCENTAGE);
+
+elseif (state_spring_loaded_brake_force_required == NO_BRAKE) then (true)
+    :cmd_slb_application(NO_BRAKE_PERCENTAGE);
+
+else (false) 
+    :In case of an error, apply the safety-fallback;
+    :cmd_slb_application(FULL_BRAKE_PERCENTAGE);
+
+
+endif
 
 
 

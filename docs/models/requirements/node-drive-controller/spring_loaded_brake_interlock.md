@@ -1,9 +1,5 @@
 
 # Requirements
-spring_loaded_brake_target_application: 0..100 %
-0 % = brakes are fully released
-100 % = brakes are fully applied
-
 spring loaded brake shall be fully applied if:
 - the vehicle is rolling backwards
 - the state of the vehicle movement is unknown
@@ -32,12 +28,13 @@ if (state_vehicle_movement == ROLLING_BACKWARDS
 	|| state_traction_controller_info == INVALID
 	|| state_door_safety == UNSAFE
 	|| state_door_safety_info == INVALID
-	|| (state_vehicle_movement == STOPPED && (state_traction_controller != TRACTION || state_straction_lock == ACTIVE))
+	|| (state_vehicle_movement == STOPPED && (state_traction_controller != TRACTION || state_traction_lock == ACTIVE))
 ) {
-	spring_loaded_brake_target_application = 100;
+	state_spring_loaded_brake_force_required = FULL_BRAKE;
 
-} else if (state_vehicle_movement == LOW_SPEED && state_traction_controller == BRAKE) {
-	spring_loaded_brake_target_application = traction_controller_brake_request_percentage;
+} else if (state_vehicle_movement == LOW_SPEED
+			&& state_traction_controller == BRAKE) {
+	state_spring_loaded_brake_force_required = MODERATE_BRAKE;
 } else {
-	spring_loaded_brake_target_application = 0;
+	state_spring_loaded_brake_force_required = NO_BRAKE;
 }
