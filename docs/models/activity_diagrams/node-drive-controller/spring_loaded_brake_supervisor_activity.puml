@@ -1,10 +1,19 @@
 @startuml spring_loaded_brake_supervisor_activity
+
 legend top
 TODO: how to handle sensor failure of position of spring loaded brake
 
 FULL_BRAKE_PERCENTAGE = 100
-TARGET_PERCENTAGE = 1..99 (read from specific position of traction controller)
+valid range of REGULAR_BRAKE_PERCENTAGE = 1..100 (read from specific position of traction controller)
 NO_BRAKE_PERCENTAGE = 0
+
+I am aware that real brake forces may vary severely from this model, but this model shall represent the reality,
+that the driver is able to influence the brake force of the slb with the traction controller.
+
+In reality spring loaded brakes are a very important contributor to bring the vehicle to a passenger-friendly stop.
+Their brake force is blended into the brake force of the electro-dynamic brakes of the engines when the vehicle approaches low speeds.
+Furthermore, by relieving some of the brake force just before a full stop is reached, they can minimize the jolt of the vehicle, before applying full force when the vehicle is finally stopped.
+That intricate system is automated and beyond the level that this project will achieve.
 endlegend
 
 
@@ -14,9 +23,20 @@ start
 if (state_spring_loaded_brake_force_required == FULL_BRAKE) then (true)
     :cmd_slb_application(FULL_BRAKE_PERCENTAGE);
 
-elseif (state_spring_loaded_brake_force_required == MODERATE_BRAKE) then (true)
-    :Read TARGET_PERCENTAGE from drive_controller;
-    :cmd_slb_application(TARGET_PERCENTAGE);
+elseif (state_spring_loaded_brake_force_required == REGULAR_BRAKE) then (true)
+        :Read percentage from traction_controller;
+        :percentage of traction_controller is negative at this point,
+        for additional safety it is checked again.
+        If value is not in the range expected, apply safety fallback action;
+
+    if (traction_controller_percentage >= 0 || traction_controller_percentage < -100) then (true)
+        :cmd_slb_application(FULL_BRAKE_PERCENTAGE);
+
+    else (false)
+        :REGULAR_BRAKE_PERCENTAGE = ABS(traction_controller_percentage);
+        :cmd_slb_application(REGULAR_BRAKE_PERCENTAGE);
+
+    endif
 
 elseif (state_spring_loaded_brake_force_required == NO_BRAKE) then (true)
     :cmd_slb_application(NO_BRAKE_PERCENTAGE);
@@ -25,10 +45,7 @@ else (false)
     :In case of an error, apply the safety-fallback;
     :cmd_slb_application(FULL_BRAKE_PERCENTAGE);
 
-
 endif
-
-
 
 stop
 

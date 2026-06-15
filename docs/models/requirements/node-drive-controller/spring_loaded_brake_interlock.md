@@ -1,5 +1,8 @@
 
 # Requirements
+possible outputs of the state_spring_loaded_brake_interlock are:
+state_spring_loaded_brake_force_required = FULL_BRAKE | REGULAR_BRAKE | NO_BRAKE;
+
 spring loaded brake shall be fully applied if:
 - the vehicle is rolling backwards
 - the state of the vehicle movement is unknown
@@ -8,7 +11,6 @@ spring loaded brake shall be fully applied if:
 - the doors are not in safe condition - state received via CAN
 - the state of the door safety is unknown (e.g. timeout was reached on messages of door safety from the door controller node)
 - the vehicle is stopped while traction is not applied by the driver or traction is not permitted
-
 
 spring loaded brake shall be applied according to the exact request of the traction controller
 - vehicle is at low speed and the driver is applying normal braking force with the traction controller
@@ -34,7 +36,7 @@ if (state_vehicle_movement == ROLLING_BACKWARDS
 
 } else if (state_vehicle_movement == LOW_SPEED
 			&& state_traction_controller == BRAKE) {
-	state_spring_loaded_brake_force_required = MODERATE_BRAKE;
+	state_spring_loaded_brake_force_required = REGULAR_BRAKE;
 } else {
 	state_spring_loaded_brake_force_required = NO_BRAKE;
 }
