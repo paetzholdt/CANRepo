@@ -10,7 +10,7 @@ typedef enum {
 
 void potentiometer_init(void);
 
-PotentiometerStatus_t get_adc_value(uint32_t *value);
+PotentiometerStatus_t get_potentiometer_value(uint32_t *value);
 
 void potentiometer_task(void);
 
