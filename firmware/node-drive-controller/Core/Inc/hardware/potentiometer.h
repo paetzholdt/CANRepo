@@ -12,7 +12,6 @@ typedef enum {
 
 
 PotentiometerStatus_t get_potentiometer_value(uint32_t *value);
-PotentiometerStatus_t get_last_attempted_sample_tick(uint32_t *last_attempted_sample_tick_out);
 PotentiometerStatus_t get_last_valid_sample_tick(uint32_t *last_valid_sample_tick_out);
 
 PotentiometerStatus_t potentiometer_init(void);

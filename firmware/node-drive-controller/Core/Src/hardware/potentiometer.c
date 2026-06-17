@@ -9,9 +9,7 @@
 extern ADC_HandleTypeDef hadc1;
 
 static uint32_t potentiometer_value;
-static uint32_t last_attempted_sample_tick; // last system time when reading was attempted
 static uint32_t last_valid_sample_tick; // last system time when reading was successful
-static bool is_available_last_attempted_sample_tick;
 static bool is_available_last_valid_sample_tick;
 
 static PotentiometerStatus_t potentiometer_status = POTENTIOMETER_STATUS_NOT_AVAILABLE;
@@ -29,19 +27,6 @@ PotentiometerStatus_t get_potentiometer_value(uint32_t *value) {
 }
 
 // shall only be called if potentiometer value was tried to be read
-PotentiometerStatus_t get_last_attempted_sample_tick(uint32_t *last_attempted_sample_tick_out) {
-	if (last_attempted_sample_tick_out == NULL) {
-		return POTENTIOMETER_STATUS_INVALID_ARGUMENT;
-	}
-
-	if (!is_available_last_attempted_sample_tick) {
-		// potentiometer_task() was never called
-		return POTENTIOMETER_STATUS_NOT_AVAILABLE;
-	}
-	*last_attempted_sample_tick_out = last_attempted_sample_tick;
-	return POTENTIOMETER_STATUS_OK;
-}
-
 PotentiometerStatus_t get_last_valid_sample_tick(uint32_t *last_valid_sample_tick_out) {
 	if (last_valid_sample_tick_out == NULL) {
 		return POTENTIOMETER_STATUS_INVALID_ARGUMENT;
@@ -69,9 +54,6 @@ PotentiometerStatus_t potentiometer_init(void) {
 
 static PotentiometerStatus_t read_potentiometer(void) {
 	HAL_StatusTypeDef adc_status; // are adc readings currently possible?
-
-	last_attempted_sample_tick = HAL_GetTick();
-	is_available_last_attempted_sample_tick = true; // written every time read_potentiometer is called - TODO: check if this is professional
 
 	adc_status = HAL_ADC_Start(&hadc1);
 	if (adc_status != HAL_OK) { // simplified check whether adc_status is working
